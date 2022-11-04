@@ -9,10 +9,10 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 
 library(readr)
-species <- read_csv("~/Macalester Essays/COMP_STAT_112/Project_Brainstorming/Datasets/Biodiversity/species.csv")
+species <- read_csv("~/GitHub/National-Parks/Biodiversity/species.csv")
 
 library(readr)
-parks <- read_csv("~/Macalester Essays/COMP_STAT_112/Project_Brainstorming/Datasets/Biodiversity/parks.csv")
+parks <- read_csv("~/GitHub/National-Parks/Biodiversity/parks.csv")
 
 ```
 
