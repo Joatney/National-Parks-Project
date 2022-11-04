@@ -7,6 +7,13 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+library(readr)
+species <- read_csv("~/Macalester Essays/COMP_STAT_112/Project_Brainstorming/Datasets/Biodiversity/species.csv")
+
+library(readr)
+parks <- read_csv("~/Macalester Essays/COMP_STAT_112/Project_Brainstorming/Datasets/Biodiversity/parks.csv")
+
 ```
 
 ## R Markdown
