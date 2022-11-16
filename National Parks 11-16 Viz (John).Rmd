@@ -1,0 +1,81 @@
+---
+title: "National Parks 11/16 Viz (John)"
+author: "John Oatney, Gwen Wooten, Tommy Fowler"
+date: "`r Sys.Date()`"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(tidyverse)
+
+library(readr)
+species <- read_csv("Biodiversity/species.csv")
+
+library(readr)
+parks <- read_csv("Biodiversity/parks.csv")
+```
+
+```{r echo = FALSE, message = FALSE}
+speciesendanger <- species %>% 
+  filter(!is.na(`Conservation Status`), Occurrence != "Not Confirmed") %>% 
+  filter(!Abundance %in% c("Native", "Not Native"))
+
+speciesabundance <- species %>% 
+  filter(!is.na(Abundance)) %>% 
+  filter(!Abundance %in% c("Native", "Not Native")) %>% 
+  group_by(Abundance, `Conservation Status`) %>% 
+  summarize(count = n()) %>% 
+  filter(`Conservation Status` == "Species of Concern")
+
+specieslargeviz <- speciesendanger %>% 
+  filter(!is.na(Abundance)) %>% 
+  group_by(Abundance, `Conservation Status`) %>% 
+  summarize(count = n()) %>% 
+  filter(!is.na(`Conservation Status`))
+
+speciesconservationviz <- speciesendanger %>% 
+  group_by(`Conservation Status`) %>% 
+  summarize(count = n()) %>% 
+  filter(!is.na(`Conservation Status`)) %>% 
+  arrange(desc(count))
+
+speciesabundanceviz <- speciesendanger %>% 
+  filter(!is.na(Abundance)) %>% 
+  group_by(Abundance) %>% 
+  summarize(count = n())
+```
+
+## Visualization 1: Conservation Status
+
+```{r echo = FALSE}
+ggplot(speciesconservationviz, aes(x = "", y = count, fill = reorder(`Conservation Status`, count))) +
+  geom_bar(stat = "identity", width = 1, color = "white") + 
+  coord_polar("y", start = 0) + 
+  theme_void() + 
+  scale_fill_manual(values = c("black", "#11CCDC", "#69EF7B", "#48A421", "#C7DD91", "#304F9B", "#BE3ACD", "#8F0F1B")) +
+  labs(fill = "Conservation Status")
+```
+
+## Visualization 2: Abundance
+
+```{r echo = FALSE}
+ggplot(speciesabundanceviz, aes(x = "", y = count, fill = reorder(Abundance, count))) + 
+  geom_bar(stat = "identity", width = 1, color = "white") + 
+  coord_polar("y", start = 0) + 
+  theme_void() +
+  scale_fill_manual(values = c("#84EE15", "#E4997F", "#284E37", "#56EBD3", "#A53460", "#99DEF9")) + 
+  labs(fill = "Abundance")
+```
+
+## Visualization 3: Abundance, elaborated
+
+```{r echo = FALSE}
+ggplot(speciesabundanceviz, aes(x = reorder(Abundance, count), y = count, fill = Abundance)) + 
+  geom_bar(stat = "identity", show.legend = FALSE) +
+  theme_classic() +
+  scale_fill_manual(values = c("#84EE15", "#56EBD3", "#E4997F", "#A53460", "#99DEF9", "#284E37")) + 
+  labs(x = "Abundance")
+```
+
