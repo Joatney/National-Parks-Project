@@ -24,7 +24,7 @@ parks <- read_csv("Biodiversity/parks.csv")
   ##Where should we allocate resources based on where endangered species are and whether the species are native or invasive? 
     #Map of endangered species
 
-```{r}
+```{r message = FALSE}
 ##Tommy
 
 ##John
@@ -39,6 +39,45 @@ speciesabundance <- species %>%
   group_by(Abundance, `Conservation Status`) %>% 
   summarize(count = n()) %>% 
   filter(`Conservation Status` == "Species of Concern")
+
+specieslargeviz <- speciesendanger %>% 
+  filter(!is.na(Abundance)) %>% 
+  group_by(Abundance, `Conservation Status`) %>% 
+  summarize(count = n()) %>% 
+  filter(!is.na(`Conservation Status`))
+
+speciesconservationviz <- speciesendanger %>% 
+  group_by(`Conservation Status`) %>% 
+  summarize(count = n()) %>% 
+  filter(!is.na(`Conservation Status`)) %>% 
+  arrange(desc(count))
+
+speciesabundanceviz <- speciesendanger %>% 
+  filter(!is.na(Abundance)) %>% 
+  group_by(Abundance) %>% 
+  summarize(count = n())
+
+# Here is where my visualization begins!
+
+ggplot(speciesconservationviz, aes(x = "", y = count, fill = reorder(`Conservation Status`, count))) +
+  geom_bar(stat = "identity", width = 1, color = "white") + 
+  coord_polar("y", start = 0) + 
+  theme_void() + 
+  scale_fill_manual(values = c("black", "#11CCDC", "#69EF7B", "#48A421", "#C7DD91", "#304F9B", "#BE3ACD", "#8F0F1B")) +
+  labs(fill = "Conservation Status")
+
+ggplot(speciesabundanceviz, aes(x = "", y = count, fill = reorder(Abundance, count))) + 
+  geom_bar(stat = "identity", width = 1, color = "white") + 
+  coord_polar("y", start = 0) + 
+  theme_void() +
+  scale_fill_manual(values = c("#84EE15", "#E4997F", "#284E37", "#56EBD3", "#A53460", "#99DEF9")) + 
+  labs(fill = "Abundance")
+
+ggplot(speciesabundanceviz, aes(x = reorder(Abundance, count), y = count, fill = Abundance)) + 
+  geom_bar(stat = "identity", show.legend = FALSE) +
+  theme_classic() +
+  scale_fill_manual(values = c("#84EE15", "#56EBD3", "#E4997F", "#A53460", "#99DEF9", "#284E37")) + 
+  labs(x = "Abundance")
 
 ##Gwen
 
