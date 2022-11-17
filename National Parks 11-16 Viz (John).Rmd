@@ -56,6 +56,8 @@ ggplot(speciesconservationviz, aes(x = "", y = count, fill = reorder(`Conservati
   theme_void() + 
   scale_fill_manual(values = c("black", "#11CCDC", "#69EF7B", "#48A421", "#C7DD91", "#304F9B", "#BE3ACD", "#8F0F1B")) +
   labs(fill = "Conservation Status")
+
+# Notes: re-order the guide, add caption for more information, add percentages
 ```
 
 ## Visualization 2: Abundance
