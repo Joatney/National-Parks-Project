@@ -48,7 +48,11 @@ speciesconservationviz <- speciesendanger %>%
   group_by(`Conservation Status`) %>% 
   summarize(count = n()) %>% 
   filter(!is.na(`Conservation Status`)) %>% 
-  arrange(desc(count))
+  arrange(desc(count)) %>% 
+  mutate(perc = (count / sum(count)) * 100) %>% 
+  mutate(ypos = cumsum(perc)- 0.4*perc ) %>% 
+  mutate(perc2 = round(perc, 1)) %>% 
+  mutate(perc3 = paste0(perc2, "%"))
 
 speciesabundanceviz <- speciesendanger %>% 
   filter(!is.na(Abundance)) %>% 
@@ -57,25 +61,34 @@ speciesabundanceviz <- speciesendanger %>%
 
 # Here is where my visualization begins!
 
-ggplot(speciesconservationviz, aes(x = "", y = count, fill = reorder(`Conservation Status`, count))) +
+ggplot(speciesconservationviz, aes(x = "", y = perc, fill = reorder(`Conservation Status`, count), label = perc3)) +
   geom_bar(stat = "identity", width = 1, color = "white") + 
   coord_polar("y", start = 0) + 
   theme_void() + 
-  scale_fill_manual(values = c("black", "#11CCDC", "#69EF7B", "#48A421", "#C7DD91", "#304F9B", "#BE3ACD", "#8F0F1B")) +
-  labs(fill = "Conservation Status")
+  scale_fill_manual(values = c("#8F0F1B", "#BE3ACD", "#304F9B", "#C7DD91", "#48A421", "#69EF7B", "#11CCDC", "black"),
+                    breaks = c("Species of Concern", "Endangered", "Under Review", "Threatened", "In Recovery", "Proposed Endangered", "Proposed Threatened", "Extinct")) +
+  geom_text(aes(y = ypos), color = "white", size = 6, check_overlap = TRUE) + 
+    labs(fill = "Conservation Status", 
+         title = "How Often Are Species Assigned Each Conservation Status?", 
+         caption = "Overwhelmingly, species are placed in the 'Species of Concern' category,\nfar outweighing the next highest category: 'Endangered', at 6.8%.\nThis data excludes any species that are not given a category.\n(Including species not in danger of extinction).")
 
 ggplot(speciesabundanceviz, aes(x = "", y = count, fill = reorder(Abundance, count))) + 
   geom_bar(stat = "identity", width = 1, color = "white") + 
   coord_polar("y", start = 0) + 
   theme_void() +
-  scale_fill_manual(values = c("#84EE15", "#E4997F", "#284E37", "#56EBD3", "#A53460", "#99DEF9")) + 
-  labs(fill = "Abundance")
+  scale_fill_manual(values = c("#99DEF9", "#A53460", "#56EBD3", "#284E37", "#E4997F", "#84EE15"), 
+                    breaks = c("Uncommon", "Rare", "Common", "Unknown", "Occasional", "Abundant")) + 
+  labs(fill = "Abundance",
+       title = "How Often Are Species Assigned Each Abundance level?", 
+       caption = "Where I had expected this data to show the same overwhelming trend in\n'Uncommon' species, it shows no overwhelming categorizations.\nLike the first graphic, this data set excludes species without\nAbundance levels, as well as those without Conservation Statuses,\nas the data we are analyzing regards primarily endangered species.")
 
-ggplot(speciesabundanceviz, aes(x = reorder(Abundance, count), y = count, fill = Abundance)) + 
+ggplot(speciesabundanceviz, aes(x = reorder(Abundance, -count), y = count, fill = Abundance)) + 
   geom_bar(stat = "identity", show.legend = FALSE) +
   theme_classic() +
   scale_fill_manual(values = c("#84EE15", "#56EBD3", "#E4997F", "#A53460", "#99DEF9", "#284E37")) + 
-  labs(x = "Abundance")
+  labs(x = "Abundance", 
+       title = "A Clearer Look at Abundance Levels", 
+       caption = "This graphic more clearly shows the actual trends in Abundance levels, using the same data as the previous graphic.")
 
 ##Gwen
 
