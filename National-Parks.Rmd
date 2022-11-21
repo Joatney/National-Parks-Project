@@ -84,7 +84,7 @@ geom_col(aes(x = fct_reorder(Category, total), fill=factor(Abundance, levels = c
 
 ```
 
-```{r message = FALSE}
+```{r message = FALSE, warning = FALSE}
 
 ## John
 
@@ -104,7 +104,20 @@ ggplot(parksendanger, aes(x = reorder(`Park Code`, Acres), y = Acres, fill = `Sp
   scale_fill_continuous(type = "viridis") + 
   scale_y_continuous(labels = c(0, "2 mil.", "4 mil.", "6 mil.", "8 mil."))
 
-# I WANT TO MAKE A VERSION OF THIS GRAPHIC WITHOUT THE ABOVE 4 MILLION, FOR BETTER SCALE
+parksendanger2 <- speciesendanger %>% 
+  group_by(`Park Name`, `Conservation Status`) %>% 
+  summarize(count = n()) %>% 
+  pivot_wider(names_from = `Conservation Status`, values_from = count, values_fill = 0) %>% 
+  left_join(parks) %>% 
+    filter(Acres < 3000000) %>% 
+  select(`Park Code`, `Park Name`, Acres, Endangered, `In Recovery`, `Species of Concern`, `Under Review`, Threatened, `Proposed Threatened`, Extinct, `Proposed Endangered`)
+
+ggplot(parksendanger2, aes(x = reorder(`Park Code`, Acres), y = Acres, fill = `Species of Concern`)) + 
+  geom_bar(stat = "identity") + 
+  theme(axis.text.x = element_text(angle = 90, size = 6)) + 
+  labs(x = "Park Code", y = "Park Size (Acres)", fill = "# Species of\nConcern") +
+  scale_fill_continuous(type = "viridis")+ 
+  scale_y_continuous(labels = c(0, "1 mil.", "2 mil.", "3 mil."))
 
 # Money for parks is generally allocated to states, rather than parks, right? Maybe we look at states that have more than one park, to see if that state would require more focus
 
@@ -124,6 +137,13 @@ statevalues <- parkstate %>%
   mutate(ConcernAvg = round(ConcernAvg, 2))
 
 # AK and CA both have 8 parks, but their species of concern numbers are way different!
+
+ggplot(statevalues, aes(x = reorder(State, Count), y = Count, fill = ConcernAvg)) + 
+  geom_bar(stat = "identity") + 
+  labs(fill = "Average # Species\nof Concern Per\nPark", x = "State") + 
+  scale_fill_gradient(low = "#C33764", high = "#1D2671") + 
+  theme_light() + 
+  scale_y_continuous(breaks = 0:8)
 
 ```
 
