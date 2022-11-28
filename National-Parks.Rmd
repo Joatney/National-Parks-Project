@@ -66,21 +66,37 @@ speciesgraph <- speciesendanger %>%
   group_by(Category, Abundance) %>% 
   summarize(total = n()) %>% 
   filter(total > 10) 
+
+graph2 <- species %>% 
+ filter(!is.na(Abundance), Abundance != 'Unknown') %>% 
+  filter(Occurrence != "Not Confirmed") %>% 
+   group_by(Category, Abundance, `Conservation Status`) %>% 
+  summarize(total = n()) %>% 
+  #mutate(str_replace_all(`Conservation Status`, "(Endagered | Threatened)", "Threatened or Endagered")) %>%
+  mutate(`Conservation Status` = replace_na(`Conservation Status`, "Not Threatened or Endagered")) %>% 
+  filter(total > 10) 
+
   
-ggplot(speciesgraph) +
-geom_col(aes(x = fct_reorder(Category, total), fill=factor(Abundance, levels = c("Rare", "Uncommon", "Occasional", "Common", "Abundant")), y=total), stat='identity') +
-  labs(x = " ", y = "Total Count") +
-    theme(panel.background = element_rect(fill = "white", colour = "white",size = 2, linetype = "solid"), panel.grid.major = element_line(size = 0.5, linetype = 'solid',colour = "white"), panel.grid.minor = element_line(size = 0.25, linetype = 'solid',colour = "white")) +
+ggplot(graph2) +
+geom_col(aes(y = fct_reorder(Category, total), x=total, fill=`Conservation Status`), stat='identity') +
+  labs(y = " ", x = "Total Count") +
+  theme(panel.background = element_rect(fill = "white", colour = "white",size = 2, linetype = "solid"), panel.grid.major = element_line(size = 0.5, linetype = 'solid',colour = "white"), panel.grid.minor = element_line(size = 0.25, linetype = 'solid',colour = "white")) +
   guides(fill = guide_legend(title.position = "top", title = "Abundance"))+
-  labs(title = "Plant and Animal Abundance in National Parks", subtitle = "What are the most abundant species in National Parks?") +
-  theme(axis.text.y = element_text(color = "grey27"),axis.text.x = element_text(face = "italic", size = 10, color = "grey27", angle = 90), axis.ticks.y = element_blank(), legend.position = "right", legend.justification = "left", plot.background = element_rect(fill ="peachpuff"), legend.background = element_rect(fill ="white"), legend.text = element_text(face="italic", color = "grey27"), legend.title = element_text(color = "grey27", face = "bold"), plot.title = element_text(face = "bold", size = 17, hjust = 0.5, color = "grey27"), plot.subtitle = element_text(face = "italic", size = 10, hjust = 0.5, color = "grey27"), plot.caption = element_text(face = "italic", color = "grey27")) +
+  labs(title = "Plant and Animal Abundance in National Parks", subtitle = "Which threatened or endangered species has the most distinct types in National Parks?") +
+  theme(legend.position = "bottom", axis.text.y = element_text(color = "grey27"),axis.text.x = element_text(size = 10, color = "grey27"), axis.ticks.y = element_blank(), plot.background = element_rect(fill ="peachpuff"), plot.title = element_text(face = "bold", size = 17, hjust = 1.52, color = "grey27"), plot.subtitle = element_text(face = "italic", size = 10, hjust = 1.35, color = "grey27"), plot.caption = element_text(face = "italic", color = "grey27")) +
   theme(axis.title.y=element_text(colour="grey27", face = "bold")) +
    theme(axis.title.x=element_text(colour="grey27", face = "bold")) 
 
+ggplot(speciesgraph) +
+geom_col(aes(y = fct_reorder(Category, total), fill=factor(Abundance, levels = c("Rare", "Uncommon", "Occasional", "Common", "Abundant")), x=total), stat='identity') +
+  labs(y = " ", x = "Total Count") +
+  theme(panel.background = element_rect(fill = "white", colour = "white",size = 2, linetype = "solid"), panel.grid.major = element_line(size = 0.5, linetype = 'solid',colour = "white"), panel.grid.minor = element_line(size = 0.25, linetype = 'solid',colour = "white")) +
+  guides(fill = guide_legend(title.position = "top", title = "Abundance"))+
+  labs(title = "Plant and Animal Abundance in National Parks", subtitle = "What are the most abundant threatened and endagered species in National Parks?") +
+  theme(axis.text.y = element_text(color = "grey27"),axis.text.x = element_text(size = 10, color = "grey27"), axis.ticks.y = element_blank(), legend.position = "right", legend.justification = "left", plot.background = element_rect(fill ="peachpuff"), legend.background = element_rect(fill ="white"), legend.text = element_text(face="italic", color = "grey27"), legend.title = element_text(color = "grey27", face = "bold"), plot.title = element_text(face = "bold", size = 17, hjust = 0.5, color = "grey27"), plot.subtitle = element_text(face = "italic", size = 10, hjust = 0.5, color = "grey27"), plot.caption = element_text(face = "italic", color = "grey27")) +
+  theme(axis.title.y=element_text(colour="grey27", face = "bold")) +
+   theme(axis.title.x=element_text(colour="grey27", face = "bold"))
 
-#we do not have a count of exactly how many of these unique species are in national parks, but from this graphic we can see that there are more unique bird species than any other category.
-
-#total count is the total amount of distinct species in each category, so nonvascular plants make up only a handful of species, whereas there are nearly 2000 different types of birds 
 
 ```
 
