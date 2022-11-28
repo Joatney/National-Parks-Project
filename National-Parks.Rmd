@@ -275,3 +275,16 @@ geom_col(aes(y = fct_reorder(Category, total, .desc = TRUE), fill= `Conservation
 ```
 
 
+
+Gwen (Sorry!)
+```{r}
+
+library(ggmap) #install.packages("ggmap")
+library(rstudioapi) #install.packages("rstudioapi")
+library(mapview) #install.packages("mapview")
+
+#########################################
+
+mapview(parks, xcol = "Longitude", ycol = "Latitude", crs = 4269, grid = FALSE)
+
+```
