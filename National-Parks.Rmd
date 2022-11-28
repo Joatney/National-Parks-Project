@@ -37,8 +37,9 @@ speciesabundance <- species %>%
   filter(`Conservation Status` == "Species of Concern")
 
 speciesnew <- species %>% 
-  filter(Occurrence != "Not Confirmed", !Abundance %in% c("Native", "Not Native"), !`Conservation Status` %in% c("Under Review", "In Recovery")) %>% 
-  mutate(`Conservation Status` = case_when(`Conservation Status` %in% c("Species of Concern", "Endangered", "Threatened", "Proposed Threatened", "Proposed Endangered") ~ "Species of Concern"))
+  filter(Occurrence != "Not Confirmed", !Abundance %in% c("Native", "Not Native"), !`Conservation Status` %in% c("Under Review", "In Recovery", "Extinct")) %>% 
+  mutate(`Conservation Status` = case_when(`Conservation Status` %in% c("Species of Concern", "Endangered", "Threatened", "Proposed Threatened", "Proposed Endangered") ~ "Species of Concern")) %>% 
+  mutate(`Conservation Status` = replace_na(`Conservation Status`, "Not of Concern")) 
 ```
 
 
@@ -239,3 +240,17 @@ ggplot(speciesabundanceviz, aes(x = reorder(Abundance, -count), y = count, fill 
        caption = "This graphic more clearly shows the actual trends in Abundance levels, using the same data as the previous graphic.")
 
 ```
+
+```{r}
+
+#Tommy
+
+finalvis <- species %>% 
+  filter(Occurrence != "Not Confirmed", !Abundance %in% c("Native", "Not Native"), !`Conservation Status` %in% c("Under Review", "In Recovery", "Extinct")) %>% 
+  mutate(`Conservation Status` = case_when(`Conservation Status` %in% c("Species of Concern", "Endangered", "Threatened", "Proposed Threatened", "Proposed Endangered") ~ "Species of Concern")) %>% 
+  mutate(`Conservation Status` = replace_na(`Conservation Status`, "Not of Concern")) 
+  
+
+head(finalvis)
+```
+
