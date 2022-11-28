@@ -22,7 +22,25 @@ parks <- read_csv("Biodiversity/parks.csv")
   #Map of National Park locations to give background information
   ##Question of whether species are endangered and whether they are native to recognize where to allocate resources. 
   ##Where should we allocate resources based on where endangered species are and whether the species are native or invasive? 
-    #Map of endangered species
+    #Map of endangered 
+    
+```{r}
+speciesendanger <- species %>% 
+  filter(!is.na(`Conservation Status`), Occurrence != "Not Confirmed") %>% 
+  filter(!Abundance %in% c("Native", "Not Native"))
+
+speciesabundance <- species %>% 
+  filter(!is.na(Abundance)) %>% 
+  filter(!Abundance %in% c("Native", "Not Native")) %>% 
+  group_by(Abundance, `Conservation Status`) %>% 
+  summarize(count = n()) %>% 
+  filter(`Conservation Status` == "Species of Concern")
+
+speciesnew <- species %>% 
+  filter(Occurrence != "Not Confirmed", !Abundance %in% c("Native", "Not Native"), !`Conservation Status` %in% c("Under Review", "In Recovery")) %>% 
+  mutate(`Conservation Status` = case_when(`Conservation Status` %in% c("Species of Concern", "Endangered", "Threatened", "Proposed Threatened", "Proposed Endangered") ~ "Species of Concern"))
+```
+
 
 ```{r}
 ##Tommy
@@ -167,17 +185,6 @@ ggplot(statevalues, aes(x = reorder(State, Count), y = Count, fill = ConcernAvg)
 
 ```{r message = FALSE}
 ## John
-
-speciesendanger <- species %>% 
-  filter(!is.na(`Conservation Status`), Occurrence != "Not Confirmed") %>% 
-  filter(!Abundance %in% c("Native", "Not Native"))
-
-speciesabundance <- species %>% 
-  filter(!is.na(Abundance)) %>% 
-  filter(!Abundance %in% c("Native", "Not Native")) %>% 
-  group_by(Abundance, `Conservation Status`) %>% 
-  summarize(count = n()) %>% 
-  filter(`Conservation Status` == "Species of Concern")
 
 specieslargeviz <- speciesendanger %>% 
   filter(!is.na(Abundance)) %>% 
