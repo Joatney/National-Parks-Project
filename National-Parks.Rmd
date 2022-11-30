@@ -10,6 +10,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
 
+library(openintro) # install.packages("openintro")
+
 library(readr)
 species <- read_csv("Biodiversity/species.csv")
 
@@ -287,4 +289,45 @@ library(mapview) #install.packages("mapview")
 
 mapview(parks, xcol = "Longitude", ycol = "Latitude", crs = 4269, grid = FALSE)
 
+```
+
+```{r}
+statevaluesmap <- statevalues %>% 
+   mutate(state_name = str_to_lower(abbr2state(State)))
+
+statevaluesmap %>%
+  ggplot() +
+  geom_map(
+    map = map_data("state"),
+    aes(
+      map_id = state_name,
+      fill = ConcernAvg
+    )
+  ) +
+  expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
+  theme_void()
+
+statevaluesmap %>%
+  ggplot() +
+  geom_map(
+    map = map_data("state"),
+    aes(
+      map_id = state_name,
+      fill = Concern
+    )
+  ) +
+  expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
+  theme_void()
+
+statevaluesmap %>%
+  ggplot() +
+  geom_map(
+    map = map_data("state"),
+    aes(
+      map_id = state_name,
+      fill = Count
+    )
+  ) +
+  expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
+  theme_void()
 ```
