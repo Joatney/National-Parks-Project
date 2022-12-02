@@ -271,8 +271,7 @@ speciesnewabundance <- speciesnew %>%
   group_by(Category, Abundance, `Conservation Status`) %>% 
   summarize(total = n()) 
   
-ggplot(speciesnewabundance) +
-geom_col(aes(y = fct_reorder(Category, total), fill= `Conservation Status`, x=total)) +
+speciesnewabundance %>% group_by(Category) %>% mutate(Grandtotal = sum(total)) %>% ungroup() %>% mutate(Category = fct_reorder(Category,Grandtotal)) %>% ggplot() + geom_col(aes(y = Category, x = total, fill = `Conservation Status`)) +
   labs(y = " ", x = "Total Count") +
   theme(panel.background = element_rect(fill = "white", colour = "white",size = 2, linetype = "solid"), panel.grid.major = element_line(size = 0.5, linetype = 'solid',colour = "white"), panel.grid.minor = element_line(size = 0.25, linetype = 'solid',colour = "white")) +
   guides(fill = guide_legend(title.position = "top", title = "Level of Concern"))+
@@ -281,6 +280,8 @@ geom_col(aes(y = fct_reorder(Category, total), fill= `Conservation Status`, x=to
   theme(axis.title.y=element_text(colour="grey27", face = "bold")) +
    theme(axis.title.x=element_text(colour="grey27", face = "bold")) +
   scale_fill_manual(values = c("darkseagreen4", "salmon"))
+
+
 
 
 
