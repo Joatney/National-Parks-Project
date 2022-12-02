@@ -323,8 +323,9 @@ head(speciespark2)
 ```
 
 
-```{r}
+```{r message = FALSE}
 statevaluesmap <- statevalues %>% 
+  full_join(states) %>% 
    mutate(state_name = str_to_lower(abbr2state(State)))
 
 statevaluesmap %>%
