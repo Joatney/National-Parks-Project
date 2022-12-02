@@ -24,6 +24,9 @@ species <- read_csv("Biodiversity/species.csv")
 library(readr)
 parks <- read_csv("Biodiversity/parks.csv")
 
+library(readr)
+states <- read_csv("Biodiversity/states.csv")
+
 ```
 
 ## Brainstorming
