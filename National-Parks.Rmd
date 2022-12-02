@@ -12,6 +12,12 @@ library(tidyverse)
 
 library(openintro) # install.packages("openintro")
 
+devtools::install_github("wmurphyrd/fiftystater") # install.packages("devtools")
+  
+  library(fiftystater)
+
+  data("fifty_states")
+
 library(readr)
 species <- read_csv("Biodiversity/species.csv")
 
@@ -320,7 +326,7 @@ statevaluesmap <- statevalues %>%
 statevaluesmap %>%
   ggplot() +
   geom_map(
-    map = map_data("state"),
+    map = fifty_states,
     aes(
       map_id = state_name,
       fill = ConcernAvg
@@ -332,7 +338,7 @@ statevaluesmap %>%
 statevaluesmap %>%
   ggplot() +
   geom_map(
-    map = map_data("state"),
+    map = fifty_states,
     aes(
       map_id = state_name,
       fill = Concern
@@ -344,7 +350,7 @@ statevaluesmap %>%
 statevaluesmap %>%
   ggplot() +
   geom_map(
-    map = map_data("state"),
+    map = fifty_states,
     aes(
       map_id = state_name,
       fill = Count
