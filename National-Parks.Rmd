@@ -69,6 +69,9 @@ concernpercent <- speciesnew %>%
 #Tommy --> PERCENT OF CONCERN FOR EACH STATE
 
 concernpercent_perstate <- speciespark2 %>% 
+  separate(State, c("State1", "State2", "State3"), sep = ", ") %>% 
+  pivot_longer(cols = c(State1, State2, State3), names_to = "State Type", values_to = "State") %>% 
+  filter(!is.na(State)) %>% 
   group_by(State, `Conservation Status`) %>% 
   summarize(total_ofconcern = n()) %>% 
   mutate(total_species_perstate = sum(total_ofconcern)) %>% 
