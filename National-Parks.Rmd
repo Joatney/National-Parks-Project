@@ -53,6 +53,17 @@ speciesnew <- species %>%
   mutate(`Conservation Status` = replace_na(`Conservation Status`, "Not of Concern")) 
 ```
 
+```{r}
+#Tommy --> PERCENT OF CONCERN FOR EACH SPECIES
+
+speciesnew %>% 
+  group_by(Category, `Conservation Status`) %>% 
+  summarize(total_ofconcern = n()) %>% 
+  mutate(total_species = sum(total_ofconcern)) %>% 
+  ungroup() %>% 
+  mutate(percent = (total_ofconcern/total_species)*100) %>% 
+  filter(`Conservation Status` != "Not of Concern")
+```
 
 ```{r}
 ##Tommy
@@ -305,22 +316,6 @@ mapview(parks, xcol = "Longitude", ycol = "Latitude", crs = 4269, grid = FALSE)
 
 ```
 
-```{r}
-#Tommy working on map
-
-speciespark <- parks %>% 
-  full_join(species)
-
-speciespark2 <- speciespark %>% 
-filter(Occurrence != "Not Confirmed", !Abundance %in% c("Native", "Not Native"), !`Conservation Status` %in% c("Under Review", "In Recovery", "Extinct")) %>% 
-  mutate(`Conservation Status` = case_when(`Conservation Status` %in% c("Species of Concern", "Endangered", "Threatened", "Proposed Threatened", "Proposed Endangered") ~ "Species of Concern")) %>% 
-  mutate(`Conservation Status` = replace_na(`Conservation Status`, "Not of Concern")) %>% 
-  mutate(total = n()) %>% 
-  
-  #I want to do "Species of Concern" over "total"
-
-head(speciespark2)
-```
 
 
 ```{r message = FALSE}
