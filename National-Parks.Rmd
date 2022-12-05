@@ -224,7 +224,7 @@ ggplot(statevalues, aes(x = reorder(State, Count), y = Count, fill = ConcernAvg)
 
 ## Data Pitfalls
 
-```{r message = FALSE}
+```{r Viz 3 message = FALSE}
 ## John
 
 specieslargeviz <- speciesendanger %>% 
@@ -319,10 +319,28 @@ speciesnewabundance %>% group_by(Category) %>% mutate(Grandtotal = sum(total)) %
 
 ```
 
+```{r VIZ 2 message + FALSE}
+speciesnewabundance2 <- speciesnew %>% 
+   filter(!is.na(`Abundance`)) %>% 
+  group_by(Category, Abundance, `Conservation Status`) %>% 
+  summarize(total = n()) 
+  
+speciesnewabundance2 %>% group_by(Category) %>% mutate(Grandtotal = sum(total)) %>% ungroup() %>% mutate(Category = fct_reorder(Category,Grandtotal)) %>% ggplot() + geom_col(aes(y = Category, x = total)) +
+  labs(y = " ", x = "Total Count") +
+
+
+  theme(panel.background = element_rect(fill = "white", colour = "white",size = 2, linetype = "solid"), panel.grid.major = element_line(size = 0.5, linetype = 'solid',colour = "white"), panel.grid.minor = element_line(size = 0.25, linetype = 'solid',colour = "white")) +
+  guides(fill = guide_legend(title.position = "top", title = "Level of Concern"))+
+  labs(title = "Plant and Animal Types in National Parks") +
+  theme(axis.text.y = element_text(color = "grey27"),axis.text.x = element_text(size = 10, color = "grey27"), axis.ticks.y = element_blank(), legend.position = "right", legend.justification = "left", plot.background = element_rect(fill ="peachpuff"), legend.background = element_rect(fill ="white"), legend.text = element_text(face="italic", color = "grey27"), legend.title = element_text(color = "grey27", face = "bold"), plot.title = element_text(face = "bold", size = 17, hjust = 0.5, color = "grey27"), plot.subtitle = element_text(face = "italic", size = 10, hjust = 0.5, color = "grey27"), plot.caption = element_text(face = "italic", color = "grey27")) +
+  theme(axis.title.y=element_text(colour="grey27", face = "bold")) +
+   theme(axis.title.x=element_text(colour="grey27", face = "bold"))
+
+```
 
 
 Gwen (Sorry!)
-```{r}
+```{r VIZ 1}
 
 library(ggmap) #install.packages("ggmap")
 library(rstudioapi) #install.packages("rstudioapi")
@@ -336,7 +354,7 @@ mapview(parks, xcol = "Longitude", ycol = "Latitude", crs = 4269, grid = FALSE)
 
 
 
-```{r message = FALSE}
+```{r VIZ 6 message = FALSE}
 statevaluesmap <- statevalues %>% 
   full_join(states) %>% 
    mutate(state_name = str_to_lower(abbr2state(State)))
