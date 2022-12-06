@@ -394,7 +394,28 @@ m <- leaflet() %>%
   addMarkers(lat = 58.50, lng = -155.00, popup = "Katmai National Park and Preserve") %>%
   addMarkers(lat = 59.92, lng = -149.65, popup = "Kenai Fjords National Park") %>%
   addMarkers(lat = 67.55, lng = -159.28, popup = "Kobuk Valley National Park") %>%
-  addMarkers(lat = 60.97, lng = -153.42, popup = "Lake Clark National Park and Preserve") 
+  addMarkers(lat = 60.97, lng = -153.42, popup = "Lake Clark National Park and Preserve") %>% 
+  addMarkers(lat = 40.49, lng = -121.51, popup = "Lassen Volcanic National Park") %>%
+  addMarkers(lat = 37.18, lng = -86.10, popup = "Mammoth Cave National Park") %>%
+  addMarkers(lat = 37.18, lng = -108.49, popup = "Mesa Verde National Park") %>%
+  addMarkers(lat = 46.85, lng = -121.75, popup = "Mount Rainier National Park") %>%
+  addMarkers(lat = 48.70, lng = -121.20, popup = "North Cascades National Park") %>%
+  addMarkers(lat = 47.97, lng = -123.50, popup = "Olympic National Park") %>%
+  addMarkers(lat = 35.07, lng = -109.78, popup = "Petrified Forest National Park") %>%
+  addMarkers(lat = 36.48, lng = -121.16, popup = "Pinnacles National Park") %>%
+  addMarkers(lat = 41.30, lng = -124.00, popup = "Redwood National Park") %>%
+  addMarkers(lat = 40.40, lng = -105.58, popup = "Rocky Mountain National Park") %>%
+  addMarkers(lat = 32.25, lng = -110.50, popup = "Saguaro National Park") %>%
+  addMarkers(lat = 36.43, lng = -118.68, popup = "Sequoia and Kings Canyon National Parks") %>%
+  addMarkers(lat = 38.53, lng = -78.35, popup = "Shenandoah National Park") %>%
+  addMarkers(lat = 46.97, lng = -103.45, popup = "Theodore Roosevelt National Park") %>%
+  addMarkers(lat = 48.50, lng = -92.88, popup = "Voyageurs National Park") %>%
+  addMarkers(lat = 43.57, lng = -103.48, popup = "Wind Cave National Park") %>%
+  addMarkers(lat = 61.00, lng = -142.00, popup = "Wrangell - St Elias National Park and Preserve") %>%
+  addMarkers(lat = 44.60, lng = -110.50, popup = "Yellowstone National Park") %>%
+  addMarkers(lat = 37.83, lng = -119.50, popup = "Yosemite National Park") %>%
+  addMarkers(lat = 37.30, lng = -113.05, popup = "Zion National Park") 
+  
 m  # Print the map
   
 
