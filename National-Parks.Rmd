@@ -18,8 +18,6 @@ devtools::install_github("wmurphyrd/fiftystater") # install.packages("devtools")
 
   data("fifty_states")
 
-library(ggpubr) # install.packages("ggpubr")  
-
 library(readr)
 species <- read_csv("Biodiversity/species.csv")
 
@@ -437,13 +435,9 @@ statevaluesmap <- statevalues %>%
   full_join(states) %>% 
    mutate(state_name = str_to_lower(abbr2state(State)))
 
-statevaluesmap_perc <- concernpercent_perstate %>% 
-  full_join(states) %>% 
-   mutate(state_name = str_to_lower(abbr2state(State)))
-
 #Average Number of Species of Concern per State
 
-concernavg <- statevaluesmap %>%
+statevaluesmap %>%
   ggplot() +
   geom_map(
     map = fifty_states,
@@ -457,7 +451,7 @@ concernavg <- statevaluesmap %>%
 
 #Total Number of Species of Concern per State
 
-concerncount <- statevaluesmap %>%
+statevaluesmap %>%
   ggplot() +
   geom_map(
     map = fifty_states,
@@ -471,7 +465,7 @@ concerncount <- statevaluesmap %>%
 
 #Total Number of Parks per State
 
-parkcount <- statevaluesmap %>%
+statevaluesmap %>%
   ggplot() +
   geom_map(
     map = fifty_states,
@@ -485,7 +479,11 @@ parkcount <- statevaluesmap %>%
 
 #Percent of Species of Concern vs. Not of Concern per State
 
-concernperc <- statevaluesmap_perc %>%
+statevaluesmap_perc <- concernpercent_perstate %>% 
+  full_join(states) %>% 
+   mutate(state_name = str_to_lower(abbr2state(State)))
+
+statevaluesmap_perc %>%
   ggplot() +
   geom_map(
     map = fifty_states,
@@ -497,51 +495,9 @@ concernperc <- statevaluesmap_perc %>%
   expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
   theme_void()
 
-ggarrange(
-  parkcount, concerncount, concernavg, ncol = 2, nrow = 2)
-)
-
 ```
 
-concernavg <- statevaluesmap %>%
-  ggplot() +
-  geom_map(
-    map = fifty_states,
-    aes(
-      map_id = state_name,
-      fill = ConcernAvg
-    )
-  ) +
-  expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
-  theme_void()
 
-concerncount <- statevaluesmap %>%
-  ggplot() +
-  geom_map(
-    map = fifty_states,
-    aes(
-      map_id = state_name,
-      fill = Concern
-    )
-  ) +
-  expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
-  theme_void()
-
-parkcount <- statevaluesmap %>%
-  ggplot() +
-  geom_map(
-    map = fifty_states,
-    aes(
-      map_id = state_name,
-      fill = Count
-    )
-  ) +
-  expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
-  theme_void()
-
-ggarrange(
-  parkcount, concerncount, concernavg, ncol = 2, nrow = 2)
-)
 
 ```{r}
 tommything <- speciesnewabundance %>% 
