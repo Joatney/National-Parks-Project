@@ -435,6 +435,8 @@ statevaluesmap <- statevalues %>%
   full_join(states) %>% 
    mutate(state_name = str_to_lower(abbr2state(State)))
 
+#Average Number of Species of Concern per State
+
 statevaluesmap %>%
   ggplot() +
   geom_map(
@@ -446,6 +448,8 @@ statevaluesmap %>%
   ) +
   expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
   theme_void()
+
+#Total Number of Species of Concern per State
 
 statevaluesmap %>%
   ggplot() +
@@ -459,6 +463,8 @@ statevaluesmap %>%
   expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
   theme_void()
 
+#Total Number of Parks per State
+
 statevaluesmap %>%
   ggplot() +
   geom_map(
@@ -471,9 +477,8 @@ statevaluesmap %>%
   expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
   theme_void()
 
-```
+#Percent of Species of Concern vs. Not of Concern per State
 
-```{r}
 statevaluesmap_perc <- concernpercent_perstate %>% 
   full_join(states) %>% 
    mutate(state_name = str_to_lower(abbr2state(State)))
@@ -489,7 +494,10 @@ statevaluesmap_perc %>%
   ) +
   expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
   theme_void()
+
 ```
+
+
 
 ```{r}
 tommything <- speciesnewabundance %>% 
@@ -500,7 +508,7 @@ tommything <- speciesnewabundance %>%
 library(plotly)
 p <- ggplot(
   tommything,
-  aes(x = `Conservation Status`, y = total, fill = `Conservation Status`)
+  aes(x = `Conservation Status`, y = total)
 ) +
   geom_col(position = "dodge") +
   facet_wrap(~Category) 
