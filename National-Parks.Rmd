@@ -270,7 +270,7 @@ spc <- ggplot(speciesconservationviz, aes(x = "", y = perc, fill = reorder(`Cons
   geom_text(aes(y = ypos), color = "white", size = 6, check_overlap = TRUE) + 
     labs(fill = "Conservation Status", 
          title = "How Often Are Species Assigned Each Conservation Status?", 
-         caption = "Overwhelmingly, species are placed in the 'Species of Concern' category,\nfar outweighing the next highest category: 'Endangered', at 6.8%.\nThis data excludes any species that are not given a category.\n(Including species not in danger of extinction).")
+         caption = "This data excludes any species that are not given a category.\n(Including species not in danger of extinction).")
 
 spa <- ggplot(speciesabundanceviz, aes(x = "", y = count, fill = reorder(Abundance, count))) + 
   geom_bar(stat = "identity", width = 1, color = "white") + 
@@ -280,7 +280,7 @@ spa <- ggplot(speciesabundanceviz, aes(x = "", y = count, fill = reorder(Abundan
                     breaks = c("Uncommon", "Rare", "Common", "Unknown", "Occasional", "Abundant")) + 
   labs(fill = "Abundance",
        title = "How Often Are Species Assigned Each Abundance level?", 
-       caption = "Where I had expected this data to show the same overwhelming trend in\n'Uncommon' species, it shows no overwhelming categorizations.\nLike the first graphic, this data set excludes species without\nAbundance levels, as well as those without Conservation Statuses,\nas the data we are analyzing regards primarily endangered species.")
+       caption = "Like the first graphic, this data set excludes species without\nAbundance levels, as well as those without Conservation Statuses,\nas the data we are analyzing regards primarily endangered species.")
 
 spa2 <- ggplot(speciesabundanceviz, aes(x = reorder(Abundance, -count), y = count, fill = Abundance)) + 
   geom_bar(stat = "identity", show.legend = FALSE) +
@@ -290,10 +290,9 @@ spa2 <- ggplot(speciesabundanceviz, aes(x = reorder(Abundance, -count), y = coun
        title = "A Clearer Look at Abundance Levels", 
        caption = "This graphic more clearly shows the actual trends in Abundance levels, using the same data as the previous graphic.")
 
-ggarrange(spc,
-          ggarrange(spa, spa2, ncol = 2, labels = c("B", "C")),
-          nrow = 2,
-          labels = "A")
+spc
+
+ggarrange(spa, spa2, nrow = 2, labels = c("A", "B"))
 
 # This viz might look bad in rmarkdown, but in full screen it's actually pretty nice
 
