@@ -1,0 +1,99 @@
+---
+date: December 14, 2022
+author: "Tommy Fowler"
+title: National Parks
+output: 
+  ioslides_presentation:
+    css: shiny-slides.css
+    widescreen: true
+    self_contained: no
+    incremental: true
+    
+---
+
+```{r setup, include=FALSE, fig.cap="Plant and Animal Abundance in National Parks"}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+
+library(openintro) # install.packages("openintro")
+
+devtools::install_github("wmurphyrd/fiftystater") # install.packages("devtools")
+  
+  library(fiftystater)
+
+  data("fifty_states")
+
+library(readr)
+species <- read_csv("Biodiversity/species.csv")
+
+library(readr)
+parks <- read_csv("Biodiversity/parks.csv")
+
+library(readr)
+states <- read_csv("Biodiversity/states.csv")
+
+```
+
+
+# 
+
+
+```{r,echo=FALSE, warning=FALSE, message=FALSE}
+speciesendanger <- species %>% 
+  filter(!is.na(`Conservation Status`), Occurrence != "Not Confirmed") %>% 
+  filter(!Abundance %in% c("Native", "Not Native"))
+
+speciesgraph <- speciesendanger %>% 
+ filter(!is.na(Abundance), Abundance != 'Unknown') %>% 
+  group_by(Category, Abundance) %>% 
+  summarize(total = n()) %>% 
+  filter(total > 10) 
+
+graph2 <- species %>% 
+ filter(!is.na(Abundance), Abundance != 'Unknown') %>% 
+  filter(Occurrence != "Not Confirmed") %>% 
+   group_by(Category, Abundance, `Conservation Status`) %>% 
+  summarize(total = n()) %>% 
+  #mutate(str_replace_all(`Conservation Status`, "(Endagered | Threatened)", "Threatened or Endagered")) %>%
+  mutate(`Conservation Status` = replace_na(`Conservation Status`, "Not Threatened or Endagered")) %>% 
+  filter(total > 10) 
+
+ggplot(graph2) +
+geom_col(aes(y = fct_reorder(Category, total), x=total, fill=`Conservation Status`), stat='identity') +
+  labs(y = " ", x = "Total Count") +
+  theme(panel.background = element_rect(fill = "white", colour = "white",size = 2, linetype = "solid"), panel.grid.major = element_line(size = 0.5, linetype = 'solid',colour = "white"), panel.grid.minor = element_line(size = 0.25, linetype = 'solid',colour = "white")) +
+  guides(fill = guide_legend(title.position = "top", title = "Abundance"))+
+  labs(title = "Plant and Animal Abundance in National Parks", subtitle = "Which threatened or endangered species has the most distinct types in National Parks?") +
+  theme(legend.position = "bottom", axis.text.y = element_text(color = "grey27"),axis.text.x = element_text(size = 10, color = "grey27"), axis.ticks.y = element_blank(), plot.background = element_rect(fill ="peachpuff"), plot.title = element_text(face = "bold", size = 17, hjust = 1.52, color = "grey27"), plot.subtitle = element_text(face = "italic", size = 10, hjust = 1.35, color = "grey27"), plot.caption = element_text(face = "italic", color = "grey27")) +
+  theme(axis.title.y=element_text(colour="grey27", face = "bold")) +
+   theme(axis.title.x=element_text(colour="grey27", face = "bold")) 
+```
+
+## Getting up
+
+- Turn off alarm
+- Get out of bed
+
+## Breakfast
+
+- Eat eggs
+- Drink coffee
+
+# In the evening
+
+## Dinner
+
+- Eat spaghetti
+- Drink wine
+
+---
+
+```{r, cars, fig.cap="A scatterplot.", echo=FALSE}
+plot(cars)
+```
+
+## Going to sleep
+
+- Get in bed
+- Count sheep
