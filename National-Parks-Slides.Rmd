@@ -44,7 +44,7 @@ speciesendanger <- species %>%
 
 speciesgraph <- speciesendanger %>% 
  filter(!is.na(Abundance), Abundance != 'Unknown') %>% 
-  group_by(Category, Abundance) %>% 
+  group_by(Category, Abundance, `Conservation Status`) %>% 
   summarize(total = n()) %>% 
   filter(total > 10) 
 
@@ -86,20 +86,22 @@ summary(cars)
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 
-graph2 <- species %>% 
+graph2 <- speciesnew %>% 
  filter(!is.na(Abundance), Abundance != 'Unknown') %>% 
   filter(Occurrence != "Not Confirmed") %>% 
    group_by(Category, Abundance, `Conservation Status`) %>% 
   summarize(total = n()) %>% 
-  #mutate(str_replace_all(`Conservation Status`, "(Endagered | Threatened)", "Threatened or Endagered")) %>%
   mutate(`Conservation Status` = replace_na(`Conservation Status`, "Not Threatened or Endagered")) %>% 
   filter(total > 10) 
+
+graph3 <- graph2 %>% 
+  filter(Category != "Vascular Plant")
 
 
 #GRAPHS START
 
- vasc <- ggplot(graph2) +
-geom_col(aes(y = fct_reorder(Category, total), x=total, fill=`Conservation Status`), stat='identity') +
+ggplot(graph2) +
+geom_col(aes(y = reorder(Category, total), x=total, fill=`Conservation Status`), stat='identity') +
      labs(y = " ", x = "Total Count") +
  # Making the background
   theme(panel.background = element_rect(fill = "white", 
@@ -151,60 +153,6 @@ geom_col(aes(y = fct_reorder(Category, total), x=total, fill=`Conservation Statu
                                    face = "bold")) 
   
 
- 
-nonvasc <- ggplot(speciesgraph) +
-geom_col(aes(y = fct_reorder(Category, total), fill=factor(Abundance, levels = c("Rare", "Uncommon", "Occasional", "Common", "Abundant")), x=total), stat='identity') +
-  labs(y = " ", x = "Total Count") +
-   # Making the background
-  theme(panel.background = element_rect(fill = "white", 
-                                        colour = "white", 
-                                        linewidth = 2, 
-                                        linetype = "solid"),
-        panel.grid.major = element_line(linewidth = 0.5, 
-                                        linetype = 'solid',
-                                        colour = "white"), 
-        panel.grid.minor = element_line(linewidth = 0.25, 
-                                        linetype = 'solid',
-                                        colour = "white")) +
-  
-  # Changing the legend
-  guides(fill = guide_legend(title.position = "top", 
-                             title = "Level of Concern")) + 
-  
-  # Giving it a title
-  labs(title = " ") +
-  
-  # Affecting text attributes
-  theme(axis.text.y = element_text(color = "grey27"),
-        axis.text.x = element_text(size = 10, color = "grey27"), 
-        axis.ticks.y = element_blank(), 
-        plot.title = element_text(face = "bold", 
-                                  size = 17, 
-                                  hjust = 0.5, 
-                                  color = "grey27"), 
-        plot.subtitle = element_text(face = "italic", 
-                                     size = 10, 
-                                     hjust = 0.5, 
-                                     color = "grey27"), 
-        plot.caption = element_text(face = "italic", 
-                                    color = "grey27"),
-        
-        # Affecting legend attributes
-        legend.position = "right", 
-        legend.justification = "left",  
-        legend.background = element_rect(fill ="white"), 
-        legend.text = element_text(face="italic", 
-                                   color = "grey27"), 
-        legend.title = element_text(color = "grey27", 
-                                    face = "bold")) +
-  
-  # Affecting axis text attributes
-  theme(axis.title.y=element_text(colour="grey27", 
-                                  face = "bold")) +
-  theme(axis.title.x=element_text(colour="grey27", 
-                                   face = "bold")) 
-  
-  
-  ggarrange(vasc, nonvasc, nrow = 2, labels = c("Including Vascular Plants", "Excluding Vascular Plants"))
+
 ```
 
