@@ -44,7 +44,7 @@ states <- read_csv("Biodiversity/states.csv")
 ```
 
 # America's National Parks
-There are 63 congressionally delegated national parks in the United States as of 2022, each with its own diverse wildlife. The data set we used for this project only focuses on 56 of these national parks. Some of these are excluded because the data set was uploaded to the repository in 2017, before several of them were established. Others, though, we excluded because they did not have data available. The 56 national parks that are included in the ["Biodiversity in National Parks" data set](https://www.kaggle.com/datasets/nationalparkservice/park-biodiversity) are mapped out here:
+There are 63 congressionally delegated national parks in the United States as of 2022, each an area of lanf protected by the National Park Service. The data set we used for this project only focuses on 56 of these national parks. Some of these are excluded because the data set was uploaded to the repository in 2016, before several of them were established. Others are excluded because the data set focuses only on national parks in the United States and not on those in the territories. The 56 national parks that are included in the ["Biodiversity in National Parks"](https://www.kaggle.com/datasets/nationalparkservice/park-biodiversity) data set are mapped out here:  
 
 ```{r echo = FALSE}
 # Because of the nature of leaflet, we had to manually insert each of the National Parks by hand
@@ -109,4 +109,73 @@ m <- leaflet() %>%
   addMarkers(lat = 37.30, lng = -113.05, popup = "Zion National Park") 
   
 m  # Print the map
+```  
+This data set shows off the immense biodiversity in these national parks, with over forty thousand unique species of plants and animals found across all 56 of the parks. Overwhelmingly, the species recorded by the National Park Service are plants, as shown below:
+
+```{r echo = FALSE, message = FALSE}
+speciesnewabundance2 <- speciesnew %>% 
+   filter(!is.na(`Abundance`)) %>% 
+  group_by(Category, Abundance, `Conservation Status`) %>% 
+  summarize(total = n()) 
+  
+speciesnewabundance2 %>% group_by(Category) %>% 
+  mutate(Grandtotal = sum(total)) %>% 
+  ungroup() %>% # We want to redefine Category, so we have to ungroup it first
+  mutate(Category = fct_reorder(Category, Grandtotal)) %>% 
+  ggplot() + 
+  geom_col(aes(y = Category, x = total), fill = "pink2") +
+  labs(y = " ", x = "Total Count") +
+
+  # Hereafter are the theme details
+
+  # Making the background
+  theme(panel.background = element_rect(fill = "white", 
+                                        colour = "white", 
+                                        linewidth = 2, 
+                                        linetype = "solid"),
+        panel.grid.major = element_line(linewidth = 0.5, 
+                                        linetype = 'solid',
+                                        colour = "white"), 
+        panel.grid.minor = element_line(linewidth = 0.25, 
+                                        linetype = 'solid',
+                                        colour = "white")) +
+  
+  # Changing the legend
+  guides(fill = guide_legend(title.position = "top", 
+                             title = "Level of Concern")) + 
+  
+  # Giving it a title
+  labs(title = "Plant and Animal Types in National Parks") +
+  
+  # Affecting text attributes
+  theme(axis.text.y = element_text(color = "grey27"),
+        axis.text.x = element_text(size = 10, color = "grey27"), 
+        axis.ticks.y = element_blank(), 
+        plot.title = element_text(face = "bold", 
+                                  size = 17, 
+                                  hjust = 0.5, 
+                                  color = "grey27"), 
+        plot.subtitle = element_text(face = "italic", 
+                                     size = 10, 
+                                     hjust = 0.5, 
+                                     color = "grey27"), 
+        plot.caption = element_text(face = "italic", 
+                                    color = "grey27"),
+        
+        # Affecting legend attributes
+        legend.position = "right", 
+        legend.justification = "left", 
+        plot.background = element_rect(fill ="peachpuff"), 
+        legend.background = element_rect(fill ="white"), 
+        legend.text = element_text(face="italic", 
+                                   color = "grey27"), 
+        legend.title = element_text(color = "grey27", 
+                                    face = "bold")) +
+  
+  # Affecting axis text attributes
+  theme(axis.title.y=element_text(colour="grey27", 
+                                  face = "bold")) +
+  theme(axis.title.x=element_text(colour="grey27", 
+                                   face = "bold"))
+
 ```
