@@ -197,7 +197,10 @@ Something easily noticed in this graph is that the category "Vascular Plants" is
 
 Because there are so many species of vascular plant in the data set, we had to remove them from certain data sets so that we could look more closely at trends.
 
-# How Conservation Efforts Happen
+# Conservation Efforts
+The National Parks Service which runs all of the national parks in the United States is federally controlled and federally funded. The service is a bureau of the U.S. Department of the Interior, and it is headed by a Director appointed by the President and confirmed by the U.S. Senate.^[https://www.nps.gov/aboutus/index.htm] This Director creates the budget for the national parks, sets programs, and creates policies regarding the parks. If there is anybody who is able to help get funds and support to the parks that need it most, it's the Director of the National Parks Service.  
+
+It is also important to note that every state gets its own budget from the federal government, and a portion of every state's budget goes toward environmental upkeep.
 
 # Grouping Issues
 
