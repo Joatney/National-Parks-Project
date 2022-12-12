@@ -64,28 +64,78 @@ speciesnew <- species %>%
 ```
 
 
-## R Markdown
+## 1
 
-This is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```{r VIZ 1, echo = FALSE, message = FALSE, warning = FALSE}
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
+# Because of the nature of leaflet, we had to manually insert each of the National Parks by hand
 
-## Slide with Bullets
+m <- leaflet() %>%
+  addTiles() %>%  
+  addMarkers(lng=-68.21, lat=44.35, popup="Acadia National Park") %>%
+  addMarkers(lat = 38.68, lng = -109.57, popup = "Arches National Park") %>%
+  addMarkers(lat = 43.75, lng = -102.50, popup = "Badlands National Park") %>%
+  addMarkers(lat = 29.25, lng = -103.25, popup = "Big Bend National Park") %>%
+  addMarkers(lat = 25.65, lng = -80.08, popup = "Biscayne National Park") %>%
+  addMarkers(lat = 38.57, lng = -107.72, popup = "Black Canyon of the Gunnison National Park") %>%
+  addMarkers(lat = 37.57, lng = -112.18, popup = "Bryce Canyon National Park") %>%
+  addMarkers(lat = 38.20, lng = -109.93, popup = "Canyonlands National Park") %>%
+  addMarkers(lat = 38.20, lng = -111.17, popup = "Capital Reef National Park") %>%
+  addMarkers(lat = 32.17, lng = -104.44, popup = "Carlsbad Caverns National Park") %>%
+  addMarkers(lat = 34.01, lng = -119.42, popup = "Channel Islands National Park") %>%
+  addMarkers(lat = 33.78, lng = -80.78, popup = "Congaree National Park") %>%
+  addMarkers(lat = 42.94, lng = -122.10, popup = "Crater Lake National Park") %>%
+  addMarkers(lat = 41.24, lng = -81.55, popup = "Cuyahoga Valley National Park") %>%
+  addMarkers(lat = 63.33, lng = -150.50, popup = "Denali National Park and Preserve") %>%
+  addMarkers(lat = 36.24, lng = -116.82, popup = "Death Valley National Park") %>%
+  addMarkers(lat = 24.63, lng = -82.87, popup = "Dry Tortugas National Park") %>%
+  addMarkers(lat = 25.32, lng = -80.93, popup = "Everglades National Park") %>%
+  addMarkers(lat = 67.78, lng = -153.30, popup = "Gates of the Arctic National Park and Preserve") %>%
+  addMarkers(lat = 48.80, lng = -114.00, popup = "Glacier National Park") %>%
+  addMarkers(lat = 58.50, lng = -137.00, popup = "Glacier Bay National Park and Preserve") %>%
+  addMarkers(lat = 38.98, lng = -114.30, popup = "Great Basin National Park") %>%
+  addMarkers(lat = 36.06, lng = -112.14, popup = "Grand Canyon National Park") %>%
+  addMarkers(lat = 37.73, lng = -105.51, popup = "Great Sand Dunes National Park and Preserve") %>%
+  addMarkers(lat = 35.68, lng = -83.53, popup = "Great Smoky Mountians National Park") %>%
+  addMarkers(lat = 43.73, lng = -110.80, popup = "Grand Teton National Park") %>%
+  addMarkers(lat = 31.92, lng = -104.87, popup = "Guadalupe Mountians National Park") %>%
+  addMarkers(lat = 20.72, lng = -156.17, popup = "Haleakala Natioanl Park") %>%
+  addMarkers(lat = 19.38, lng = -155.20, popup = "Hawaii Volcanoes National Park") %>%
+  addMarkers(lat = 34.51, lng = -93.05, popup = "Hot Springs National Park") %>%
+  addMarkers(lat = 48.10, lng = -88.55, popup = "Isle Royale National Park") %>%
+  addMarkers(lat = 33.79, lng = -115.90, popup = "Joshua Tree National Park") %>%
+  addMarkers(lat = 58.50, lng = -155.00, popup = "Katmai National Park and Preserve") %>%
+  addMarkers(lat = 59.92, lng = -149.65, popup = "Kenai Fjords National Park") %>%
+  addMarkers(lat = 67.55, lng = -159.28, popup = "Kobuk Valley National Park") %>%
+  addMarkers(lat = 60.97, lng = -153.42, popup = "Lake Clark National Park and Preserve") %>% 
+  addMarkers(lat = 40.49, lng = -121.51, popup = "Lassen Volcanic National Park") %>%
+  addMarkers(lat = 37.18, lng = -86.10, popup = "Mammoth Cave National Park") %>%
+  addMarkers(lat = 37.18, lng = -108.49, popup = "Mesa Verde National Park") %>%
+  addMarkers(lat = 46.85, lng = -121.75, popup = "Mount Rainier National Park") %>%
+  addMarkers(lat = 48.70, lng = -121.20, popup = "North Cascades National Park") %>%
+  addMarkers(lat = 47.97, lng = -123.50, popup = "Olympic National Park") %>%
+  addMarkers(lat = 35.07, lng = -109.78, popup = "Petrified Forest National Park") %>%
+  addMarkers(lat = 36.48, lng = -121.16, popup = "Pinnacles National Park") %>%
+  addMarkers(lat = 41.30, lng = -124.00, popup = "Redwood National Park") %>%
+  addMarkers(lat = 40.40, lng = -105.58, popup = "Rocky Mountain National Park") %>%
+  addMarkers(lat = 32.25, lng = -110.50, popup = "Saguaro National Park") %>%
+  addMarkers(lat = 36.43, lng = -118.68, popup = "Sequoia and Kings Canyon National Parks") %>%
+  addMarkers(lat = 38.53, lng = -78.35, popup = "Shenandoah National Park") %>%
+  addMarkers(lat = 46.97, lng = -103.45, popup = "Theodore Roosevelt National Park") %>%
+  addMarkers(lat = 48.50, lng = -92.88, popup = "Voyageurs National Park") %>%
+  addMarkers(lat = 43.57, lng = -103.48, popup = "Wind Cave National Park") %>%
+  addMarkers(lat = 61.00, lng = -142.00, popup = "Wrangell - St Elias National Park and Preserve") %>%
+  addMarkers(lat = 44.60, lng = -110.50, popup = "Yellowstone National Park") %>%
+  addMarkers(lat = 37.83, lng = -119.50, popup = "Yosemite National Park") %>%
+  addMarkers(lat = 37.30, lng = -113.05, popup = "Zion National Park") 
+  
+m  # Print the map
 
-- Bullet 1
-- Bullet 2
-- Bullet 3
-
-## Slide with R Output
-
-```{r cars, echo = TRUE}
-summary(cars)
 ```
 
-## Slide with Plot
+## 2
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
-
 graph2 <- speciesnew %>% 
  filter(!is.na(Abundance), Abundance != 'Unknown') %>% 
   filter(Occurrence != "Not Confirmed") %>% 
@@ -154,72 +204,51 @@ geom_col(aes(y = reorder(Category, total), x=total, fill=`Conservation Status`),
   
 
 
+
 ```
 
-# Leaflet slide
 
-```{r echo = FALSE}
-# Because of the nature of leaflet, we had to manually insert each of the National Parks by hand
+## 3
 
-m <- leaflet() %>%
-  addTiles() %>%  
-  addMarkers(lng=-68.21, lat=44.35, popup="Acadia National Park") %>%
-  addMarkers(lat = 38.68, lng = -109.57, popup = "Arches National Park") %>%
-  addMarkers(lat = 43.75, lng = -102.50, popup = "Badlands National Park") %>%
-  addMarkers(lat = 29.25, lng = -103.25, popup = "Big Bend National Park") %>%
-  addMarkers(lat = 25.65, lng = -80.08, popup = "Biscayne National Park") %>%
-  addMarkers(lat = 38.57, lng = -107.72, popup = "Black Canyon of the Gunnison National Park") %>%
-  addMarkers(lat = 37.57, lng = -112.18, popup = "Bryce Canyon National Park") %>%
-  addMarkers(lat = 38.20, lng = -109.93, popup = "Canyonlands National Park") %>%
-  addMarkers(lat = 38.20, lng = -111.17, popup = "Capital Reef National Park") %>%
-  addMarkers(lat = 32.17, lng = -104.44, popup = "Carlsbad Caverns National Park") %>%
-  addMarkers(lat = 34.01, lng = -119.42, popup = "Channel Islands National Park") %>%
-  addMarkers(lat = 33.78, lng = -80.78, popup = "Congaree National Park") %>%
-  addMarkers(lat = 42.94, lng = -122.10, popup = "Crater Lake National Park") %>%
-  addMarkers(lat = 41.24, lng = -81.55, popup = "Cuyahoga Valley National Park") %>%
-  addMarkers(lat = 63.33, lng = -150.50, popup = "Denali National Park and Preserve") %>%
-  addMarkers(lat = 36.24, lng = -116.82, popup = "Death Valley National Park") %>%
-  addMarkers(lat = 24.63, lng = -82.87, popup = "Dry Tortugas National Park") %>%
-  addMarkers(lat = 25.32, lng = -80.93, popup = "Everglades National Park") %>%
-  addMarkers(lat = 67.78, lng = -153.30, popup = "Gates of the Arctic National Park and Preserve") %>%
-  addMarkers(lat = 48.80, lng = -114.00, popup = "Glacier National Park") %>%
-  addMarkers(lat = 58.50, lng = -137.00, popup = "Glacier Bay National Park and Preserve") %>%
-  addMarkers(lat = 38.98, lng = -114.30, popup = "Great Basin National Park") %>%
-  addMarkers(lat = 36.06, lng = -112.14, popup = "Grand Canyon National Park") %>%
-  addMarkers(lat = 37.73, lng = -105.51, popup = "Great Sand Dunes National Park and Preserve") %>%
-  addMarkers(lat = 35.68, lng = -83.53, popup = "Great Smoky Mountians National Park") %>%
-  addMarkers(lat = 43.73, lng = -110.80, popup = "Grand Teton National Park") %>%
-  addMarkers(lat = 31.92, lng = -104.87, popup = "Guadalupe Mountians National Park") %>%
-  addMarkers(lat = 20.72, lng = -156.17, popup = "Haleakala Natioanl Park") %>%
-  addMarkers(lat = 19.38, lng = -155.20, popup = "Hawaii Volcanoes National Park") %>%
-  addMarkers(lat = 34.51, lng = -93.05, popup = "Hot Springs National Park") %>%
-  addMarkers(lat = 48.10, lng = -88.55, popup = "Isle Royale National Park") %>%
-  addMarkers(lat = 33.79, lng = -115.90, popup = "Joshua Tree National Park") %>%
-  addMarkers(lat = 58.50, lng = -155.00, popup = "Katmai National Park and Preserve") %>%
-  addMarkers(lat = 59.92, lng = -149.65, popup = "Kenai Fjords National Park") %>%
-  addMarkers(lat = 67.55, lng = -159.28, popup = "Kobuk Valley National Park") %>%
-  addMarkers(lat = 60.97, lng = -153.42, popup = "Lake Clark National Park and Preserve") %>% 
-  addMarkers(lat = 40.49, lng = -121.51, popup = "Lassen Volcanic National Park") %>%
-  addMarkers(lat = 37.18, lng = -86.10, popup = "Mammoth Cave National Park") %>%
-  addMarkers(lat = 37.18, lng = -108.49, popup = "Mesa Verde National Park") %>%
-  addMarkers(lat = 46.85, lng = -121.75, popup = "Mount Rainier National Park") %>%
-  addMarkers(lat = 48.70, lng = -121.20, popup = "North Cascades National Park") %>%
-  addMarkers(lat = 47.97, lng = -123.50, popup = "Olympic National Park") %>%
-  addMarkers(lat = 35.07, lng = -109.78, popup = "Petrified Forest National Park") %>%
-  addMarkers(lat = 36.48, lng = -121.16, popup = "Pinnacles National Park") %>%
-  addMarkers(lat = 41.30, lng = -124.00, popup = "Redwood National Park") %>%
-  addMarkers(lat = 40.40, lng = -105.58, popup = "Rocky Mountain National Park") %>%
-  addMarkers(lat = 32.25, lng = -110.50, popup = "Saguaro National Park") %>%
-  addMarkers(lat = 36.43, lng = -118.68, popup = "Sequoia and Kings Canyon National Parks") %>%
-  addMarkers(lat = 38.53, lng = -78.35, popup = "Shenandoah National Park") %>%
-  addMarkers(lat = 46.97, lng = -103.45, popup = "Theodore Roosevelt National Park") %>%
-  addMarkers(lat = 48.50, lng = -92.88, popup = "Voyageurs National Park") %>%
-  addMarkers(lat = 43.57, lng = -103.48, popup = "Wind Cave National Park") %>%
-  addMarkers(lat = 61.00, lng = -142.00, popup = "Wrangell - St Elias National Park and Preserve") %>%
-  addMarkers(lat = 44.60, lng = -110.50, popup = "Yellowstone National Park") %>%
-  addMarkers(lat = 37.83, lng = -119.50, popup = "Yosemite National Park") %>%
-  addMarkers(lat = 37.30, lng = -113.05, popup = "Zion National Park") 
-  
-m  # Print the map
-```  
+```{r include=FALSE}
+## John
+
+specieslargeviz <- speciesendanger %>% 
+  filter(!is.na(Abundance)) %>% 
+  group_by(Abundance, `Conservation Status`) %>% 
+  summarize(count = n()) %>% 
+  filter(!is.na(`Conservation Status`))
+
+speciesconservationviz <- speciesendanger %>% 
+  group_by(`Conservation Status`) %>% 
+  summarize(count = n()) %>% 
+  filter(!is.na(`Conservation Status`)) %>% 
+  arrange(desc(count)) %>% 
+  mutate(perc = (count / sum(count)) * 100) %>% 
+  mutate(ypos = cumsum(perc)- 0.4*perc ) %>% 
+  mutate(perc2 = round(perc, 1)) %>% 
+  mutate(perc3 = paste0(perc2, "%"))
+
+speciesabundanceviz <- speciesendanger %>% 
+  filter(!is.na(Abundance)) %>% 
+  group_by(Abundance) %>% 
+  summarize(count = n())
+```
+
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+spc <- ggplot(speciesconservationviz, aes(x = "", y = perc, fill = reorder(`Conservation Status`, count), label = perc3)) +
+  geom_bar(stat = "identity", width = 1, color = "white") + 
+  coord_polar("y", start = 0) + 
+  theme_void() + 
+  scale_fill_manual(values = c("#8F0F1B", "#BE3ACD", "#304F9B", "#C7DD91", "#48A421", "#69EF7B", "#11CCDC", "black"),
+                    breaks = c("Species of Concern", "Endangered", "Under Review", "Threatened", "In Recovery", "Proposed Endangered", "Proposed Threatened", "Extinct")) +
+  geom_text(aes(y = ypos), color = "white", size = 6, check_overlap = TRUE) + 
+    labs(fill = "Conservation Status", 
+         title = "How Often Are Species Assigned Each Conservation Status?")
+
+spc
+```
+
+
 
