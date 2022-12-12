@@ -226,7 +226,7 @@ statevalues <- parkstate %>%
 
 ggplot(statevalues, aes(x = reorder(State, Count), y = Count, fill = ConcernAvg)) + 
   geom_bar(stat = "identity") + 
-  labs(fill = "Average # Species\nof Concern Per\nPark", x = "State") + 
+  labs(fill = "Average # Species\nof Concern Per\nState", x = "State") + 
   scale_fill_gradient(low = "#C33764", high = "#1D2671") + 
   theme_light() + 
   scale_y_continuous(breaks = 0:8)

@@ -138,7 +138,7 @@ m  # Print the map
 
 This data set shows off the immense biodiversity in these national parks, with over forty thousand unique species of plants and animals found across all 56 of the parks. Overwhelmingly, the species recorded by the National Park Service are plants, as shown below:  
 
-```{r echo = FALSE, message = FALSE}
+```{r echo = FALSE, message = FALSE, warning = FALSE}
 speciesnewabundance2 <- speciesnew %>% 
    filter(!is.na(`Abundance`)) %>% 
   group_by(Category, Abundance, `Conservation Status`) %>% 
@@ -200,7 +200,36 @@ Because there are so many species of vascular plant in the data set, we had to r
 # Conservation Efforts
 The National Parks Service which runs all of the national parks in the United States is federally controlled and federally funded. The service is a bureau of the U.S. Department of the Interior, and it is headed by a Director appointed by the President and confirmed by the U.S. Senate.^[https://www.nps.gov/aboutus/index.htm] This Director creates the budget for the national parks, sets programs, and creates policies regarding the parks. If there is anybody who is able to help get funds and support to the parks that need it most, it's the Director of the National Parks Service.  
 
-It is also important to note that every state gets its own budget from the federal government, and a portion of every state's budget goes toward environmental upkeep.
+It is also important to note that every state gets its own budget from the federal government, and a portion of every state's budget goes toward environmental upkeep. So, there is an efficacy to focusing on states rather than just individual parks.  
 
 # Grouping Issues
+Knowing all of this national parks information and having a question in hand, we began working with the data. Particularly, we focused on the Conservation Status variable. In the code book for the data set, the variable is listed as using the IUCN conservation status categories.^[https://www.iucnredlist.org/ (under "The IUCN Red List Categories and Criteria")] These categories are: *Not Evaluated, Data Deficient, Least Concern, Near Threatened, Vulnerable, Endangered, Critically Endangered, Extinct in the Wild,* and *Extinct*. They show a clear progression from least to most concern and would be incredibly helpful as categories for our research purposes. The problem is, though, that the data set is not actually using those categories! What we have instead is: *Under Review, In Recovery, Proposed Threatened, Threatened, Proposed Endangered, Endangered, Species of Concern,* and *Extinct*.  
 
+What is worse is the distribution of the categories:
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+speciesconservationviz <- speciesendanger %>% 
+  group_by(`Conservation Status`) %>% 
+  summarize(count = n()) %>% 
+  filter(!is.na(`Conservation Status`)) %>% 
+  arrange(desc(count)) %>% 
+  mutate(perc = (count / sum(count)) * 100) %>% 
+  mutate(ypos = cumsum(perc)- 0.4*perc ) %>% 
+  mutate(perc2 = round(perc, 1)) %>% 
+  mutate(perc3 = paste0(perc2, "%"))
+
+ggplot(speciesconservationviz, aes(x = "", y = perc, fill = reorder(`Conservation Status`, count), label = perc3)) +
+  geom_bar(stat = "identity", width = 1, color = "white") + 
+  coord_polar("y", start = 0) + 
+  theme_void() + 
+  scale_fill_manual(values = c("#8F0F1B", "#BE3ACD", "#304F9B", "#C7DD91", "#48A421", "#69EF7B", "#11CCDC", "black"),
+                    breaks = c("Species of Concern", "Endangered", "Under Review", "Threatened", "In Recovery", "Proposed Endangered", "Proposed Threatened", "Extinct")) +
+  geom_text(aes(y = ypos), color = "white", size = 6, check_overlap = TRUE) + 
+    labs(fill = "Conservation Status", 
+         title = "How Often Are Species Assigned Each Conservation Status?", 
+         caption = "This data excludes any species that are not given a category.\n(Including species not in danger of extinction).")
+```  
+
+Of all of the species that were assigned a conservation status, 83.4% of them were assigned Species of Concern! That number is too high to be normal. What seems to have happened is that the people in the National Parks Service who gathered the data used lay terms and general groupings when assigning conservation status. Some of them must have thrown any species of any concern category into "Species of Concern".  
+
+This poses a problem for our evaluation of concern, though, as we have no way of looking at the official categories in any meaningful way across the data set. To counter this issue, we wrangled the data and grouped these conservation status categories into two types: "Of Concern", composed of *Proposed Threatened, Threatened, Proposed Endangered, Endangered*, and *Species of Concern*; and "Not of Concern", composed of all NA values. The other categories, due to their small size and their lack of exact relation to either category, are ignored for considerations of concern.
