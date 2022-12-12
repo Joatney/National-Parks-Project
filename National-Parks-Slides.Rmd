@@ -1,0 +1,102 @@
+---
+title: "National Parks Slides"
+author: "John Oatney, Gwen Wooten, Tommy Fowler"
+date: "`r Sys.Date()`"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+# Here are the packages we used:
+
+library(tidyverse)
+
+library(openintro) 
+
+library(ggpubr)  
+  
+library(leaflet)
+
+devtools::install_github("wmurphyrd/fiftystater")
+  
+  library(fiftystater)
+
+  data("fifty_states")
+  
+  
+# Here are the data sets:
+
+library(readr)
+species <- read_csv("Biodiversity/species.csv")
+
+library(readr)
+parks <- read_csv("Biodiversity/parks.csv")
+
+library(readr)
+states <- read_csv("Biodiversity/states.csv")
+```
+
+```{r Key Data Set Variations, include = FALSE}
+speciesendanger <- species %>% 
+  filter(!is.na(`Conservation Status`), Occurrence != "Not Confirmed") %>% 
+  filter(!Abundance %in% c("Native", "Not Native"))
+
+speciesabundance <- species %>% 
+  filter(!is.na(Abundance)) %>% 
+  filter(!Abundance %in% c("Native", "Not Native")) %>% 
+  group_by(Abundance, `Conservation Status`) %>% 
+  summarize(count = n()) %>% 
+  filter(`Conservation Status` == "Species of Concern")
+
+speciesnew <- species %>% 
+  filter(Occurrence != "Not Confirmed", 
+         !Abundance %in% c("Native", "Not Native"), 
+         !`Conservation Status` %in% c("Under Review", "In Recovery", "Extinct")) %>% 
+  mutate(`Conservation Status` = case_when(`Conservation Status` %in% c("Species of Concern", "Endangered", "Threatened", "Proposed Threatened", "Proposed Endangered") ~ "Species of Concern")) %>% 
+  mutate(`Conservation Status` = replace_na(`Conservation Status`, "Not of Concern"))
+```
+
+
+## R Markdown
+
+This is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
+
+## Slide with Bullets
+
+- Bullet 1
+- Bullet 2
+- Bullet 3
+
+## Slide with R Output
+
+```{r cars, echo = TRUE}
+summary(cars)
+```
+
+## Slide with Plot
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+graph2 <- species %>% 
+ filter(!is.na(Abundance), Abundance != 'Unknown') %>% 
+  filter(Occurrence != "Not Confirmed") %>% 
+   group_by(Category, Abundance, `Conservation Status`) %>% 
+  summarize(total = n()) %>% 
+  #mutate(str_replace_all(`Conservation Status`, "(Endagered | Threatened)", "Threatened or Endagered")) %>%
+  mutate(`Conservation Status` = replace_na(`Conservation Status`, "Not Threatened or Endagered")) %>% 
+  filter(total > 10) 
+
+  
+ggplot(graph2) +
+geom_col(aes(y = fct_reorder(Category, total), x=total, fill=`Conservation Status`), stat='identity') +
+  labs(y = " ", x = "Total Count") +
+  theme(panel.background = element_rect(fill = "white", colour = "white",size = 2, linetype = "solid"), panel.grid.major = element_line(size = 0.5, linetype = 'solid',colour = "white"), panel.grid.minor = element_line(size = 0.25, linetype = 'solid',colour = "white")) +
+  guides(fill = guide_legend(title.position = "top", title = "Abundance"))+
+  labs(title = "Plant and Animal Abundance in National Parks", subtitle = "Which threatened or endangered species has the most distinct types in National Parks?") +
+  theme(legend.position = "bottom", axis.text.y = element_text(color = "grey27"),axis.text.x = element_text(size = 10, color = "grey27"), axis.ticks.y = element_blank(), plot.background = element_rect(fill ="peachpuff"), plot.title = element_text(face = "bold", size = 17, hjust = 1.52, color = "grey27"), plot.subtitle = element_text(face = "italic", size = 10, hjust = 1.35, color = "grey27"), plot.caption = element_text(face = "italic", color = "grey27")) +
+  theme(axis.title.y=element_text(colour="grey27", face = "bold")) +
+   theme(axis.title.x=element_text(colour="grey27", face = "bold")) 
+```
+
