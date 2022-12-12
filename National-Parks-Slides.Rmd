@@ -64,6 +64,11 @@ speciesnew <- species %>%
 ```
 
 
+## Conservation Efforts
+
+- The National Park Service
+- Individual States
+
 ## 1
 
 ```{r VIZ 1, echo = FALSE, message = FALSE, warning = FALSE}
@@ -251,4 +256,4 @@ spc
 ```
 
 
-
+## Conclusion
