@@ -447,6 +447,27 @@ statevaluesmap_perc <- concernpercent_perstate %>%
   full_join(states) %>% 
    mutate(state_name = str_to_lower(abbr2state(State)))
 
+statecategories <- speciesnew %>% 
+  filter(Category != "Vascular Plant") %>% 
+  group_by(`Park Name`, Category) %>% 
+  left_join(parks) %>% select(`Park Code`, `Park Name`, State, Acres, Category) %>% 
+  separate(State, c("State1", "State2", "State3"), sep = ", ") %>% 
+  pivot_longer(cols = c(State1, State2, State3), names_to = "State Type", values_to = "State") %>% 
+  filter(!is.na(State)) %>% 
+  group_by(State, Category) %>% 
+  summarize(count = n()) %>% 
+  
+  # Now we do an inefficient but accurate method of pulling out the highest categories
+  
+  filter(count %in% c(1359, 300, 897, 2130, 811, 1225, 2149, 1564, 269, 243, 244, 230, 1754, 644, 159, 606, 242, 147, 473, 426, 649, 987, 712, 682, 1715)) %>% 
+  
+  # Now we join it to make it work as a map
+  
+  full_join(states) %>% 
+  mutate(state_name = str_to_lower(abbr2state(State)))
+  
+  
+
 #Average Number of Species of Concern per State
 
 concernavg <- statevaluesmap %>%
@@ -509,6 +530,30 @@ concernperc <- statevaluesmap_perc %>%
 
 ggarrange(
   parkcount, concerncount, concernavg, concernperc, ncol = 2, nrow = 2)
+
+statecategories %>% 
+  ggplot() +
+  geom_map(
+    map = fifty_states,
+    aes(
+      map_id = state_name,
+      fill = Category
+    ), color = "black"
+  ) + 
+  expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
+  labs(fill = "Most Common\nSpecies\nCategory") +
+  theme_void()
+
+statecategories %>% 
+  filter(Category == "Bird") %>% 
+  ggplot() + 
+  geom_bar(
+    aes(
+      x = fct_reorder(State, count), 
+      y = count
+    ), stat = "identity"
+  ) + 
+  labs(x = "State", y = "# of Species", title = "How Many Bird Species Are There In States\nWhere Birds Are The Most Common Category?")
 
 ```
 
