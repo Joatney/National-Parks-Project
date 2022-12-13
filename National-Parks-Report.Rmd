@@ -233,3 +233,74 @@ ggplot(speciesconservationviz, aes(x = "", y = perc, fill = reorder(`Conservatio
 Of all of the species that were assigned a conservation status, 83.4% of them were assigned Species of Concern! That number is too high to be normal. What seems to have happened is that the people in the National Parks Service who gathered the data used lay terms and general groupings when assigning conservation status. Some of them must have thrown any species of any concern category into "Species of Concern".  
 
 This poses a problem for our evaluation of concern, though, as we have no way of looking at the official categories in any meaningful way across the data set. To counter this issue, we wrangled the data and grouped these conservation status categories into two types: "Of Concern", composed of *Proposed Threatened, Threatened, Proposed Endangered, Endangered*, and *Species of Concern*; and "Not of Concern", composed of all NA values. The other categories, due to their small size and their lack of exact relation to either category, are ignored for considerations of concern.
+
+## How Much Concern Are Species Under?
+Using our new binary category for conservation status, we can return to the categories from before. I HAVE NO IDEA WHAT TO SAY HERE
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+graph2 <- speciesnew %>% 
+ filter(!is.na(Abundance), Abundance != 'Unknown') %>% 
+  filter(Occurrence != "Not Confirmed") %>% 
+   group_by(Category, Abundance, `Conservation Status`) %>% 
+  summarize(total = n()) %>% 
+  mutate(`Conservation Status` = replace_na(`Conservation Status`, "Not Threatened or Endagered")) %>% 
+  filter(total > 10) 
+
+graph3 <- graph2 %>% 
+  filter(Category != "Vascular Plant")
+
+
+#GRAPHS START
+
+ggplot(graph2) +
+geom_col(aes(y = reorder(Category, total), x=total, fill=`Conservation Status`), stat='identity') +
+     labs(y = " ", x = "Total Count") +
+ # Making the background
+  theme(panel.background = element_rect(fill = "white", 
+                                        colour = "white", 
+                                        linewidth = 2, 
+                                        linetype = "solid"),
+        panel.grid.major = element_line(linewidth = 0.5, 
+                                        linetype = 'solid',
+                                        colour = "white"), 
+        panel.grid.minor = element_line(linewidth = 0.25, 
+                                        linetype = 'solid',
+                                        colour = "white")) +
+  
+  # Changing the legend
+  guides(fill = guide_legend(title.position = "top", 
+                             title = "Level of Concern")) + 
+  
+  # Giving it a title
+  labs(title = "Concern of Plant and Animal Types") +
+  
+  # Affecting text attributes
+  theme(axis.text.y = element_text(color = "grey27"),
+        axis.text.x = element_text(size = 10, color = "grey27"), 
+        axis.ticks.y = element_blank(), 
+        plot.title = element_text(face = "bold", 
+                                  size = 17, 
+                                  hjust = 0.5, 
+                                  color = "grey27"), 
+        plot.subtitle = element_text(face = "italic", 
+                                     size = 10, 
+                                     hjust = 0.5, 
+                                     color = "grey27"), 
+        plot.caption = element_text(face = "italic", 
+                                    color = "grey27"),
+        
+        # Affecting legend attributes
+        legend.position = "right", 
+        legend.justification = "left",  
+        legend.background = element_rect(fill ="white"), 
+        legend.text = element_text(face="italic", 
+                                   color = "grey27"), 
+        legend.title = element_text(color = "grey27", 
+                                    face = "bold")) +
+  
+  # Affecting axis text attributes
+  theme(axis.title.y=element_text(colour="grey27", 
+                                  face = "bold")) +
+  theme(axis.title.x=element_text(colour="grey27", 
+                                   face = "bold")) 
+```
