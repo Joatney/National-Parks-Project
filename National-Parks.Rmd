@@ -31,11 +31,7 @@ states <- read_csv("Biodiversity/states.csv")
 
 ```
 
-## Brainstorming
-  #Map of National Park locations to give background information
-  ##Question of whether species are endangered and whether they are native to recognize where to allocate resources. 
-  ##Where should we allocate resources based on where endangered species are and whether the species are native or invasive? 
-    #Map of endangered 
+## The Most Chaotic Assortment of Data Sets and Visualizations Known to Humans
     
 ```{r}
 speciesendanger <- species %>% 
