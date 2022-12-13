@@ -459,7 +459,7 @@ statecategories <- speciesnew %>%
   
   # Now we do an inefficient but accurate method of pulling out the highest categories
   
-  filter(count %in% c(1359, 300, 897, 2130, 811, 1225, 2149, 1564, 269, 243, 244, 230, 1754, 644, 159, 606, 242, 147, 473, 426, 649, 987, 712, 682, 1715)) %>% 
+  filter(count %in% c(1359, 300, 897, 2130, 811, 1225, 2149, 1564, 269, 243, 244, 230, 1754, 644, 159, 606, 242, 147, 473, 426, 649, 987, 712, 682, 1715, 359)) %>% 
   
   # Now we join it to make it work as a map
   
