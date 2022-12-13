@@ -188,7 +188,6 @@ speciesnewabundance2 %>% group_by(Category) %>%
                                   face = "bold")) +
   theme(axis.title.x=element_text(colour="grey27", 
                                    face = "bold"))
-
 ```  
 
 What this graph represents is the presence of a certain category of species in a park. Some of the species appear more than once (certain types of trees are going to be present in almost all of the parks!), which brings the total over the number of unique species.  
@@ -238,6 +237,242 @@ This poses a problem for our evaluation of concern, though, as we have no way of
 Using our new binary category for conservation status, we can return to the categories from before. I HAVE NO IDEA WHAT TO SAY HERE
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
+graph2 <- speciesnew %>% 
+ filter(!is.na(Abundance), Abundance != 'Unknown') %>% 
+  filter(Occurrence != "Not Confirmed") %>% 
+   group_by(Category, Abundance, `Conservation Status`) %>% 
+  summarize(total = n()) %>% 
+  mutate(`Conservation Status` = replace_na(`Conservation Status`, "Not Threatened or Endagered")) %>% 
+  filter(total > 10) 
+
+graph3 <- graph2 %>% 
+  filter(Category != "Vascular Plant")
+
+
+#GRAPHS START
+
+ggplot(graph2) +
+geom_col(aes(y = reorder(Category, total), x=total, fill=`Conservation Status`), stat='identity') +
+     labs(y = " ", x = "Total Count") +
+ # Making the background
+  theme(panel.background = element_rect(fill = "white", 
+                                        colour = "white", 
+                                        linewidth = 2, 
+                                        linetype = "solid"),
+        panel.grid.major = element_line(linewidth = 0.5, 
+                                        linetype = 'solid',
+                                        colour = "white"), 
+        panel.grid.minor = element_line(linewidth = 0.25, 
+                                        linetype = 'solid',
+                                        colour = "white")) +
+  
+  # Changing the legend
+  guides(fill = guide_legend(title.position = "top", 
+                             title = "Level of Concern")) + 
+  
+  # Giving it a title
+  labs(title = "Concern of Plant and Animal Types") +
+  
+  # Affecting text attributes
+  theme(axis.text.y = element_text(color = "grey27"),
+        axis.text.x = element_text(size = 10, color = "grey27"), 
+        axis.ticks.y = element_blank(), 
+        plot.title = element_text(face = "bold", 
+                                  size = 17, 
+                                  hjust = 0.5, 
+                                  color = "grey27"), 
+        plot.subtitle = element_text(face = "italic", 
+                                     size = 10, 
+                                     hjust = 0.5, 
+                                     color = "grey27"), 
+        plot.caption = element_text(face = "italic", 
+                                    color = "grey27"),
+        
+        # Affecting legend attributes
+        legend.position = "right", 
+        legend.justification = "left",  
+        legend.background = element_rect(fill ="white"), 
+        legend.text = element_text(face="italic", 
+                                   color = "grey27"), 
+        legend.title = element_text(color = "grey27", 
+                                    face = "bold")) +
+  
+  # Affecting axis text attributes
+  theme(axis.title.y=element_text(colour="grey27", 
+                                  face = "bold")) +
+  theme(axis.title.x=element_text(colour="grey27", 
+                                   face = "bold")) 
+```
+
+## Appendix
+Here is all of the code used in this report.
+
+### Key Data Set Variations
+```
+speciesendanger <- species %>% 
+  filter(!is.na(`Conservation Status`), Occurrence != "Not Confirmed") %>% 
+  filter(!Abundance %in% c("Native", "Not Native"))
+
+speciesabundance <- species %>% 
+  filter(!is.na(Abundance)) %>% 
+  filter(!Abundance %in% c("Native", "Not Native")) %>% 
+  group_by(Abundance, `Conservation Status`) %>% 
+  summarize(count = n()) %>% 
+  filter(`Conservation Status` == "Species of Concern")
+
+speciesnew <- species %>% 
+  filter(Occurrence != "Not Confirmed", 
+         !Abundance %in% c("Native", "Not Native"), 
+         !`Conservation Status` %in% c("Under Review", "In Recovery", "Extinct")) %>% 
+  mutate(`Conservation Status` = case_when(`Conservation Status` %in% c("Species of Concern", "Endangered", "Threatened", "Proposed Threatened", "Proposed Endangered") ~ "Species of Concern")) %>% 
+  mutate(`Conservation Status` = replace_na(`Conservation Status`, "Not of Concern"))
+```
+
+### National Parks Map
+```
+# Because of the nature of leaflet, we had to manually insert each of the National Parks by hand
+
+m <- leaflet() %>%
+  addTiles() %>%  
+  addMarkers(lng=-68.21, lat=44.35, popup="Acadia National Park") %>%
+  addMarkers(lat = 38.68, lng = -109.57, popup = "Arches National Park") %>%
+  addMarkers(lat = 43.75, lng = -102.50, popup = "Badlands National Park") %>%
+  addMarkers(lat = 29.25, lng = -103.25, popup = "Big Bend National Park") %>%
+  addMarkers(lat = 25.65, lng = -80.08, popup = "Biscayne National Park") %>%
+  addMarkers(lat = 38.57, lng = -107.72, popup = "Black Canyon of the Gunnison National Park") %>%
+  addMarkers(lat = 37.57, lng = -112.18, popup = "Bryce Canyon National Park") %>%
+  addMarkers(lat = 38.20, lng = -109.93, popup = "Canyonlands National Park") %>%
+  addMarkers(lat = 38.20, lng = -111.17, popup = "Capital Reef National Park") %>%
+  addMarkers(lat = 32.17, lng = -104.44, popup = "Carlsbad Caverns National Park") %>%
+  addMarkers(lat = 34.01, lng = -119.42, popup = "Channel Islands National Park") %>%
+  addMarkers(lat = 33.78, lng = -80.78, popup = "Congaree National Park") %>%
+  addMarkers(lat = 42.94, lng = -122.10, popup = "Crater Lake National Park") %>%
+  addMarkers(lat = 41.24, lng = -81.55, popup = "Cuyahoga Valley National Park") %>%
+  addMarkers(lat = 63.33, lng = -150.50, popup = "Denali National Park and Preserve") %>%
+  addMarkers(lat = 36.24, lng = -116.82, popup = "Death Valley National Park") %>%
+  addMarkers(lat = 24.63, lng = -82.87, popup = "Dry Tortugas National Park") %>%
+  addMarkers(lat = 25.32, lng = -80.93, popup = "Everglades National Park") %>%
+  addMarkers(lat = 67.78, lng = -153.30, popup = "Gates of the Arctic National Park and Preserve") %>%
+  addMarkers(lat = 48.80, lng = -114.00, popup = "Glacier National Park") %>%
+  addMarkers(lat = 58.50, lng = -137.00, popup = "Glacier Bay National Park and Preserve") %>%
+  addMarkers(lat = 38.98, lng = -114.30, popup = "Great Basin National Park") %>%
+  addMarkers(lat = 36.06, lng = -112.14, popup = "Grand Canyon National Park") %>%
+  addMarkers(lat = 37.73, lng = -105.51, popup = "Great Sand Dunes National Park and Preserve") %>%
+  addMarkers(lat = 35.68, lng = -83.53, popup = "Great Smoky Mountians National Park") %>%
+  addMarkers(lat = 43.73, lng = -110.80, popup = "Grand Teton National Park") %>%
+  addMarkers(lat = 31.92, lng = -104.87, popup = "Guadalupe Mountians National Park") %>%
+  addMarkers(lat = 20.72, lng = -156.17, popup = "Haleakala Natioanl Park") %>%
+  addMarkers(lat = 19.38, lng = -155.20, popup = "Hawaii Volcanoes National Park") %>%
+  addMarkers(lat = 34.51, lng = -93.05, popup = "Hot Springs National Park") %>%
+  addMarkers(lat = 48.10, lng = -88.55, popup = "Isle Royale National Park") %>%
+  addMarkers(lat = 33.79, lng = -115.90, popup = "Joshua Tree National Park") %>%
+  addMarkers(lat = 58.50, lng = -155.00, popup = "Katmai National Park and Preserve") %>%
+  addMarkers(lat = 59.92, lng = -149.65, popup = "Kenai Fjords National Park") %>%
+  addMarkers(lat = 67.55, lng = -159.28, popup = "Kobuk Valley National Park") %>%
+  addMarkers(lat = 60.97, lng = -153.42, popup = "Lake Clark National Park and Preserve") %>% 
+  addMarkers(lat = 40.49, lng = -121.51, popup = "Lassen Volcanic National Park") %>%
+  addMarkers(lat = 37.18, lng = -86.10, popup = "Mammoth Cave National Park") %>%
+  addMarkers(lat = 37.18, lng = -108.49, popup = "Mesa Verde National Park") %>%
+  addMarkers(lat = 46.85, lng = -121.75, popup = "Mount Rainier National Park") %>%
+  addMarkers(lat = 48.70, lng = -121.20, popup = "North Cascades National Park") %>%
+  addMarkers(lat = 47.97, lng = -123.50, popup = "Olympic National Park") %>%
+  addMarkers(lat = 35.07, lng = -109.78, popup = "Petrified Forest National Park") %>%
+  addMarkers(lat = 36.48, lng = -121.16, popup = "Pinnacles National Park") %>%
+  addMarkers(lat = 41.30, lng = -124.00, popup = "Redwood National Park") %>%
+  addMarkers(lat = 40.40, lng = -105.58, popup = "Rocky Mountain National Park") %>%
+  addMarkers(lat = 32.25, lng = -110.50, popup = "Saguaro National Park") %>%
+  addMarkers(lat = 36.43, lng = -118.68, popup = "Sequoia and Kings Canyon National Parks") %>%
+  addMarkers(lat = 38.53, lng = -78.35, popup = "Shenandoah National Park") %>%
+  addMarkers(lat = 46.97, lng = -103.45, popup = "Theodore Roosevelt National Park") %>%
+  addMarkers(lat = 48.50, lng = -92.88, popup = "Voyageurs National Park") %>%
+  addMarkers(lat = 43.57, lng = -103.48, popup = "Wind Cave National Park") %>%
+  addMarkers(lat = 61.00, lng = -142.00, popup = "Wrangell - St Elias National Park and Preserve") %>%
+  addMarkers(lat = 44.60, lng = -110.50, popup = "Yellowstone National Park") %>%
+  addMarkers(lat = 37.83, lng = -119.50, popup = "Yosemite National Park") %>%
+  addMarkers(lat = 37.30, lng = -113.05, popup = "Zion National Park") 
+  
+m  # Print the map
+```
+
+### Species Categories Bar Chart
+```
+speciesnewabundance2 <- speciesnew %>% 
+   filter(!is.na(`Abundance`)) %>% 
+  group_by(Category, Abundance, `Conservation Status`) %>% 
+  summarize(total = n()) 
+  
+speciesnewabundance2 %>% group_by(Category) %>% 
+  mutate(Grandtotal = sum(total)) %>% 
+  ungroup() %>% # We want to redefine Category, so we have to ungroup it first
+  mutate(Category = fct_reorder(Category, Grandtotal)) %>% 
+  ggplot() + 
+  geom_col(aes(y = Category, x = total), fill = "pink2") +
+  labs(y = " ", x = "Total Count") +
+
+  # Hereafter are the theme details
+  
+  # Making the background
+  theme(panel.background = element_rect(fill = "white", 
+                                        colour = "white", 
+                                        linewidth = 2, 
+                                        linetype = "solid"),
+        panel.grid.major = element_line(linewidth = 0.5, 
+                                        linetype = 'solid',
+                                        colour = "white"), 
+        panel.grid.minor = element_line(linewidth = 0.25, 
+                                        linetype = 'solid',
+                                        colour = "white")) +
+  # Giving it a title
+  labs(title = "Plant and Animal Types") +
+  
+  # Affecting text attributes
+  theme(axis.text.y = element_text(color = "grey27"),
+        axis.text.x = element_text(size = 10, color = "grey27"), 
+        axis.ticks.y = element_blank(), 
+        plot.title = element_text(face = "bold", 
+                                  size = 17, 
+                                  hjust = 0.5, 
+                                  color = "grey27"), 
+        plot.subtitle = element_text(face = "italic", 
+                                     size = 10, 
+                                     hjust = 0.5, 
+                                     color = "grey27"), 
+        plot.caption = element_text(face = "italic", 
+                                    color = "grey27")) + 
+  
+  # Affecting axis text attributes
+  theme(axis.title.y=element_text(colour="grey27", 
+                                  face = "bold")) +
+  theme(axis.title.x=element_text(colour="grey27", 
+                                   face = "bold"))
+```
+
+### Conservation Grouping Pie Chart
+```
+speciesconservationviz <- speciesendanger %>% 
+  group_by(`Conservation Status`) %>% 
+  summarize(count = n()) %>% 
+  filter(!is.na(`Conservation Status`)) %>% 
+  arrange(desc(count)) %>% 
+  mutate(perc = (count / sum(count)) * 100) %>% 
+  mutate(ypos = cumsum(perc)- 0.4*perc ) %>% 
+  mutate(perc2 = round(perc, 1)) %>% 
+  mutate(perc3 = paste0(perc2, "%"))
+
+ggplot(speciesconservationviz, aes(x = "", y = perc, fill = reorder(`Conservation Status`, count), label = perc3)) +
+  geom_bar(stat = "identity", width = 1, color = "white") + 
+  coord_polar("y", start = 0) + 
+  theme_void() + 
+  scale_fill_manual(values = c("#8F0F1B", "#BE3ACD", "#304F9B", "#C7DD91", "#48A421", "#69EF7B", "#11CCDC", "black"),
+                    breaks = c("Species of Concern", "Endangered", "Under Review", "Threatened", "In Recovery", "Proposed Endangered", "Proposed Threatened", "Extinct")) +
+  geom_text(aes(y = ypos), color = "white", size = 6, check_overlap = TRUE) + 
+    labs(fill = "Conservation Status", 
+         title = "How Often Are Species Assigned Each Conservation Status?", 
+         caption = "This data excludes any species that are not given a category.\n(Including species not in danger of extinction).")
+```
+
+### Concern of Categories Bar Chart
+```
 graph2 <- speciesnew %>% 
  filter(!is.na(Abundance), Abundance != 'Unknown') %>% 
   filter(Occurrence != "Not Confirmed") %>% 
