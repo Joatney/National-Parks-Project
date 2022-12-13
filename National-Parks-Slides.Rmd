@@ -307,25 +307,6 @@ geom_col(aes(y = reorder(Category, total), x=total, fill=`Conservation Status`),
 
 ```
 
-## How Are the Parks Doing?
-```{r echo = FALSE, message = FALSE, warning = FALSE}
-parksendanger <- speciesendanger %>% 
-  group_by(`Park Name`, `Conservation Status`) %>% 
-  summarize(count = n()) %>% 
-  pivot_wider(names_from = `Conservation Status`, values_from = count, values_fill = 0) %>% 
-  left_join(parks) %>% 
-  select(`Park Code`, `Park Name`, Acres, Endangered, `In Recovery`, `Species of Concern`, `Under Review`, Threatened, `Proposed Threatened`, Extinct, `Proposed Endangered`)
-
-# Size of park does not seem to be related to how many species of concern there are in the park!
-
-ggplot(parksendanger, aes(x = reorder(`Park Code`, Acres), y = Acres, fill = `Species of Concern`)) + 
-  geom_bar(stat = "identity") + 
-  theme(axis.text.x = element_text(angle = 90, size = 6)) + 
-  labs(x = "Park Code", y = "Park Size (Acres)", fill = "# Species of\nConcern") +
-  scale_fill_continuous(type = "viridis") + 
-  scale_y_continuous(labels = c(0, "2 mil.", "4 mil.", "6 mil.", "8 mil."))
-```
-
 ## How Is Each State Doing?
 
 ```{r VIZ 6, include= FALSE}

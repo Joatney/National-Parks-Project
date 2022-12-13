@@ -306,7 +306,7 @@ geom_col(aes(y = reorder(Category, total), x=total, fill=`Conservation Status`),
 
 Vascular plants have a proportionally low number of species of concern. Now, there is another point to note on that subject, which is that almost none of the categories has a significant proportion of concern. This does not change, though, that the proportion is much lower than we had anticipated. Perhaps the tree planting and protection programs from the National Parks Service and the IUCN really are protecting the trees effectively in national parks.  
 
-The same cannot be said for birds in national parks. The proportion of birds of concern to birds not of concern is higher than in any other category. It is still rather low, but one must remember that this is counting number of *species*, and not number of *individuals*. There are hundreds of species of birds that are under conservation concern and need assistance.
+The same cannot be said for birds in national parks. The proportion of birds of concern to birds not of concern is higher than in any other category. It is still rather low, but one must remember that this is counting number of *species*, and not number of *individuals*. There are hundreds of species of birds that are under conservation concern and need assistance. These numbers being so much higher shows that birds are often in need of more support than other categories of species.
 
 ## Appendix
 Here is all of the code used in this report.
