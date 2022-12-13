@@ -149,7 +149,7 @@ speciesnewabundance2 %>% group_by(Category) %>%
   ungroup() %>% # We want to redefine Category, so we have to ungroup it first
   mutate(Category = fct_reorder(Category, Grandtotal)) %>% 
   ggplot() + 
-  geom_col(aes(y = Category, x = total), fill = "pink2") +
+  geom_col(aes(y = Category, x = total)) +
   labs(y = " ", x = "Total Count") +
 
   # Hereafter are the theme details
@@ -306,7 +306,102 @@ geom_col(aes(y = reorder(Category, total), x=total, fill=`Conservation Status`),
 
 Vascular plants have a proportionally low number of species of concern. Now, there is another point to note on that subject, which is that almost none of the categories has a significant proportion of concern. This does not change, though, that the proportion is much lower than we had anticipated. Perhaps the tree planting and protection programs from the National Parks Service and the IUCN really are protecting the trees effectively in national parks.  
 
-The same cannot be said for birds in national parks. The proportion of birds of concern to birds not of concern is higher than in any other category. It is still rather low, but one must remember that this is counting number of *species*, and not number of *individuals*. There are hundreds of species of birds that are under conservation concern and need assistance. These numbers being so much higher shows that birds are often in need of more support than other categories of species.
+The same cannot be said for birds in national parks. The proportion of birds of concern to birds not of concern is higher than in any other category. It is still rather low, but one must remember that this is counting number of *species*, and not number of *individuals*. There are hundreds of species of birds that are under conservation concern and need assistance. These numbers being so much higher shows that birds are often in need of more support than other categories of species.  
+
+Generally, though, the majority of species are not of concern. This means that financial and policy support can be more accurately focused in places that need it the most.  
+
+## Identifying Where Support Should Go
+We have already established how support gets delegated and change gets made in the National Parks Service, but where should the Director's support really get focused? You might think to focus on individual parks, but you should remember that states have their own budgets, and that some states have more parks than others. The National Parks Service could choose to focus their money and policy on a state-by-state level depending on which states need the most financial support.  
+
+If that is the path that they choose to take, as we suggest it should be, the first thing to consider is how many parks each state has.  
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+parkstate <- speciesendanger %>% 
+  group_by(`Park Name`, `Conservation Status`) %>% 
+  summarize(count = n()) %>% 
+  pivot_wider(names_from = `Conservation Status`, 
+              values_from = count, 
+              values_fill = 0) %>% 
+  left_join(parks) %>% 
+  select(`Park Code`, `Park Name`, State, Acres, Endangered, `In Recovery`, `Species of Concern`, `Under Review`, Threatened, `Proposed Threatened`, Extinct, `Proposed Endangered`) %>% 
+  
+  # Separating parks with several states out into individual state/park pairings
+  
+  separate(State, c("State1", "State2", "State3"), sep = ", ") %>% 
+  pivot_longer(cols = c(State1, State2, State3), names_to = "State Type", values_to = "State") %>% 
+  filter(!is.na(State))
+
+statevalues <- parkstate %>% 
+  group_by(State) %>% 
+  summarize(Concern = sum(`Species of Concern`), ConcernAvg = mean(`Species of Concern`), Count = n()) %>% 
+  mutate(ConcernAvg = round(ConcernAvg, 2))
+
+statevaluesmap <- statevalues %>% 
+  full_join(states) %>% 
+   mutate(state_name = str_to_lower(abbr2state(State)))
+
+
+# GRAPHS START
+
+statevaluesmap %>%
+  ggplot() +
+  geom_map(
+    map = fifty_states,
+    aes(
+      map_id = state_name,
+      fill = Count
+    )
+  ) +
+  expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
+  labs(fill = "# of\nParks", title = "# of Parks per State") +
+  theme_void()
+```  
+
+It is important to note that some national parks exist in more than one state. For this map, each state that those parks are in is considered as having the park. This means that some parks are represented more than once, but for the purposes of considering how many parks a state needs to take care of, that is fine.  
+
+There are two states that are tied for having the highest number of parks: Alaska and California. Some states like Idaho and Colorado have a slightly higher amount, but no state is able to rival the eight parks in both Alaska and California.  
+
+It is possible, then, that one of those two states is in need of the most support. Having that many parks must cost a lot of money! Considering, then, that Alaska and California have the highest number of parks, we looked at the number of species of concern on similar maps to see whether either of those two states had irregularly high numbers.  
+
+First, we looked at total species of concern:  
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+statevaluesmap %>%
+  ggplot() +
+  geom_map(
+    map = fifty_states,
+    aes(
+      map_id = state_name,
+      fill = Concern
+    )
+  ) +
+  expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
+  labs(fill = "Total Species\nof Concern", title = "Total Species of Concern per State") +
+  theme_void()
+```  
+
+This map shows that California, with a massive majority, has the highest number of species of concern: over 600 species of concern! This would make sense because having more parks would mean having more species, but Alaska does not show the same trend. In fact, Alaska is in the lower half of the range, with relatively few total species of concern. Perhaps, though, this is because Alaska's climate does not allow for a lot of diversity in species.  
+
+Maybe changing from a total to an average would make the trend closer between the two highest states:
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+statevaluesmap %>%
+  ggplot() +
+  geom_map(
+    map = fifty_states,
+    aes(
+      map_id = state_name,
+      fill = ConcernAvg
+    )
+  ) +
+  expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
+  labs(fill = "Avg. #\nSpecies of\nConcern", title = "Average Species of Concern per State") +
+  theme_void()
+```  
+
+Now this map tells an entirely different story. Alaska takes point even lower, with close to no species of concern as the average per park! From this, it seems clear that Alaska, despite having eight parks, is not in need of focused support from the National Parks Service. What this map does show, though, is a trend for Texas, Tennessee, and North Carolina having high averages for species of concern. These states have very few parks and so their high species of concern numbers in those few parks mean that they show up quite strongly on this map. This would be cause to consider those states, but looking at California, which we know has eight national parks, we can see that it is not doing so well. The average is certainly shining a better light on California, but it is still showing an average of almost 80 species of concern per park.  
+
+We decided that we wanted to see these concern numbers from one more angle, though, and so we considered the percentage of species of concern against species not of concern in each state to see if that trend could steer us away from the conclusion that the other maps have been drawing us toward: that California is in the greatest need of support.
 
 ## Appendix
 Here is all of the code used in this report.
@@ -410,7 +505,7 @@ speciesnewabundance2 %>% group_by(Category) %>%
   ungroup() %>% # We want to redefine Category, so we have to ungroup it first
   mutate(Category = fct_reorder(Category, Grandtotal)) %>% 
   ggplot() + 
-  geom_col(aes(y = Category, x = total), fill = "pink2") +
+  geom_col(aes(y = Category, x = total)) +
   labs(y = " ", x = "Total Count") +
 
   # Hereafter are the theme details
@@ -542,4 +637,78 @@ geom_col(aes(y = reorder(Category, total), x=total, fill=`Conservation Status`),
                                   face = "bold")) +
   theme(axis.title.x=element_text(colour="grey27", 
                                    face = "bold")) 
+```  
+
+### # of Parks per State Map
 ```
+parkstate <- speciesendanger %>% 
+  group_by(`Park Name`, `Conservation Status`) %>% 
+  summarize(count = n()) %>% 
+  pivot_wider(names_from = `Conservation Status`, 
+              values_from = count, 
+              values_fill = 0) %>% 
+  left_join(parks) %>% 
+  select(`Park Code`, `Park Name`, State, Acres, Endangered, `In Recovery`, `Species of Concern`, `Under Review`, Threatened, `Proposed Threatened`, Extinct, `Proposed Endangered`) %>% 
+  
+  # Separating parks with several states out into individual state/park pairings
+  
+  separate(State, c("State1", "State2", "State3"), sep = ", ") %>% 
+  pivot_longer(cols = c(State1, State2, State3), names_to = "State Type", values_to = "State") %>% 
+  filter(!is.na(State))
+
+statevalues <- parkstate %>% 
+  group_by(State) %>% 
+  summarize(Concern = sum(`Species of Concern`), ConcernAvg = mean(`Species of Concern`), Count = n()) %>% 
+  mutate(ConcernAvg = round(ConcernAvg, 2))
+
+statevaluesmap <- statevalues %>% 
+  full_join(states) %>% 
+   mutate(state_name = str_to_lower(abbr2state(State))
+   
+# GRAPHS START
+   
+statevaluesmap %>%
+  ggplot() +
+  geom_map(
+    map = fifty_states,
+    aes(
+      map_id = state_name,
+      fill = Count
+    )
+  ) +
+  expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
+  labs(fill = "# of\nParks", title = "# of Parks per State") +
+  theme_void()
+```  
+
+## Total Species of Concern per State Map
+```
+statevaluesmap %>%
+  ggplot() +
+  geom_map(
+    map = fifty_states,
+    aes(
+      map_id = state_name,
+      fill = Concern
+    )
+  ) +
+  expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
+  labs(fill = "Total Species\nof Concern", title = "Total Species of Concern per State") +
+  theme_void()
+```  
+
+## Average Species of Concern per State Map
+```
+statevaluesmap %>%
+  ggplot() +
+  geom_map(
+    map = fifty_states,
+    aes(
+      map_id = state_name,
+      fill = ConcernAvg
+    )
+  ) +
+  expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
+  labs(fill = "Avg. #\nSpecies of\nConcern", title = "Average Species of Concern per State") +
+  theme_void()
+```  
