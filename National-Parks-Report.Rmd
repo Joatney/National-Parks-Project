@@ -30,6 +30,9 @@ devtools::install_github("wmurphyrd/fiftystater")
 
   data("fifty_states")
   
+library(ggmap)
+  
+library(dplyr)
   
 # Here are the data sets:
 
@@ -304,16 +307,78 @@ geom_col(aes(y = reorder(Category, total), x=total, fill=`Conservation Status`),
                                    face = "bold")) 
 ```  
 
+Generally, the majority of species are not of concern. This means that financial and policy support can be more accurately focused in places that need it the most. That being said, there are some trends that appear in this graph.  
+
 Vascular plants have a proportionally low number of species of concern. Now, there is another point to note on that subject, which is that almost none of the categories has a significant proportion of concern. This does not change, though, that the proportion is much lower than we had anticipated. Perhaps the tree planting and protection programs from the National Parks Service and the IUCN really are protecting the trees effectively in national parks.  
 
 The same cannot be said for birds in national parks. The proportion of birds of concern to birds not of concern is higher than in any other category. It is still rather low, but one must remember that this is counting number of *species*, and not number of *individuals*. There are hundreds of species of birds that are under conservation concern and need assistance. These numbers being so much higher shows that birds are often in need of more support than other categories of species.  
 
-Generally, though, the majority of species are not of concern. This means that financial and policy support can be more accurately focused in places that need it the most.  
+## Birds As Indicators of Concern
+If birds are in greater need of support, then they could be used as an indicator of which parks (or for our purposes, which states) are most in need of support. Of course, the bird factor alone would not be enough to tell us for sure, but we knew that if we could find a state that favored birds, had a high proportion of species of concern, and had other factors making that state need support, we would have a well-founded idea of which state answers our question.  
+
+So, the first thing we did was we looked at the category counts for each state, pulling out which was the highest. For thse purposes, we removed vascular plants, as we know already that they are not hugely of concern, and we could expect them to be the most common in every state if we kept them in.  
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+statecategories <- speciesnew %>% 
+  filter(Category != "Vascular Plant") %>% 
+  group_by(`Park Name`, Category) %>% 
+  left_join(parks) %>% select(`Park Code`, `Park Name`, State, Acres, Category) %>% 
+  separate(State, c("State1", "State2", "State3"), sep = ", ") %>% 
+  pivot_longer(cols = c(State1, State2, State3), names_to = "State Type", values_to = "State") %>% 
+  filter(!is.na(State)) %>% 
+  group_by(State, Category) %>% 
+  summarize(count = n()) %>% 
+  
+  # Now we do an inefficient but accurate method of pulling out the highest categories
+  
+  filter(count %in% c(1359, 300, 897, 2130, 811, 1225, 2149, 1564, 269, 243, 244, 230, 1754, 644, 159, 606, 242, 147, 473, 426, 649, 987, 712, 682, 1715, 359)) %>% 
+  
+  # Now we join it to make it work as a map
+  
+  full_join(states) %>% 
+  mutate(state_name = str_to_lower(abbr2state(State)))
+
+# GRAPHS START
+
+statecategories %>% 
+  ggplot() +
+  geom_map(
+    map = fifty_states,
+    aes(
+      map_id = state_name,
+      fill = Category
+    ), color = "black"
+  ) + 
+  expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
+  labs(fill = "Species\nCategory", title = "Most Common Species Category per State") +
+  theme_void()
+```  
+
+Most states have more species of birds than anything else, which makes sense considering they were the second highest category after vascular plants. Several states showed other values, mainly in insects, but for the purposes of using birds as indicators of concern, we can exclude those states. They likely do not have enough birds to be important to this consideration.  
+
+Using just those states that have more species of birds than any other category, we looked at how many different species of birds were present in each state. It would be reasonable to assume that the state with the highest number of bird species would be in need of the most support since we are using birds as a sort of metric for concern.
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+statecategories %>% 
+  filter(Category == "Bird") %>% 
+  ggplot() + 
+  geom_bar(
+    aes(
+      x = fct_reorder(State, count), 
+      y = count
+    ), stat = "identity"
+  ) + 
+  labs(x = "State", y = "# of Species", title = "How Many Bird Species Are There In States\nWhere Birds Are The Most Common Category?")
+```  
+
+What this graph shows is that California has the highest number of bird species with over 2,000 species represented across its national parks. This first sign indicator suggests that California could be the state that needs the most financial support. Looking at more numeric indicators, we can focus on California and see whether the amount of concern lines up with the bird indicator.  
 
 ## Identifying Where Support Should Go
 We have already established how support gets delegated and change gets made in the National Parks Service, but where should the Director's support really get focused? You might think to focus on individual parks, but you should remember that states have their own budgets, and that some states have more parks than others. The National Parks Service could choose to focus their money and policy on a state-by-state level depending on which states need the most financial support.  
 
 If that is the path that they choose to take, as we suggest it should be, the first thing to consider is how many parks each state has.  
+
+It is important to note that some national parks exist in more than one state. For this map, each state that those parks are in is considered as having the park. This means that some parks are represented more than once, but for the purposes of considering how many parks a state needs to take care of, that is fine.  
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 parkstate <- speciesendanger %>% 
@@ -357,9 +422,7 @@ statevaluesmap %>%
   theme_void()
 ```  
 
-It is important to note that some national parks exist in more than one state. For this map, each state that those parks are in is considered as having the park. This means that some parks are represented more than once, but for the purposes of considering how many parks a state needs to take care of, that is fine.  
-
-There are two states that are tied for having the highest number of parks: Alaska and California. Some states like Idaho and Colorado have a slightly higher amount, but no state is able to rival the eight parks in both Alaska and California.  
+There are two states that are tied for having the highest number of parks: Alaska and California. Some states like Idaho and Colorado have a slightly higher amount, but no state is able to rival the eight parks in both Alaska and California. California now has two factors contributing to it with the bird indicator and the number of parks.  
 
 It is possible, then, that one of those two states is in need of the most support. Having that many parks must cost a lot of money! Considering, then, that Alaska and California have the highest number of parks, we looked at the number of species of concern on similar maps to see whether either of those two states had irregularly high numbers.  
 
@@ -402,6 +465,101 @@ statevaluesmap %>%
 Now this map tells an entirely different story. Alaska takes point even lower, with close to no species of concern as the average per park! From this, it seems clear that Alaska, despite having eight parks, is not in need of focused support from the National Parks Service. What this map does show, though, is a trend for Texas, Tennessee, and North Carolina having high averages for species of concern. These states have very few parks and so their high species of concern numbers in those few parks mean that they show up quite strongly on this map. This would be cause to consider those states, but looking at California, which we know has eight national parks, we can see that it is not doing so well. The average is certainly shining a better light on California, but it is still showing an average of almost 80 species of concern per park.  
 
 We decided that we wanted to see these concern numbers from one more angle, though, and so we considered the percentage of species of concern against species not of concern in each state to see if that trend could steer us away from the conclusion that the other maps have been drawing us toward: that California is in the greatest need of support.
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+concernpercent <- speciesnew %>% 
+  group_by(Category, `Conservation Status`) %>% 
+  summarize(total_ofconcern = n()) %>% 
+  mutate(total_species = sum(total_ofconcern)) %>% 
+  ungroup() %>% 
+  mutate(percent = (total_ofconcern/total_species)*100) %>% 
+  filter(`Conservation Status` != "Not of Concern")
+
+speciespark <- parks %>% 
+  full_join(species)
+
+speciespark2 <- speciespark %>% 
+filter(Occurrence != "Not Confirmed", 
+       !Abundance %in% c("Native", "Not Native"), 
+       !`Conservation Status` %in% c("Under Review", "In Recovery", "Extinct")) %>% 
+  
+  # Renaming the species of concern into the binary categories
+  
+  mutate(`Conservation Status` = case_when(`Conservation Status` %in% c("Species of Concern", "Endangered", "Threatened", "Proposed Threatened", "Proposed Endangered") ~ "Species of Concern")) %>% 
+  mutate(`Conservation Status` = replace_na(`Conservation Status`, "Not of Concern")) 
+
+concernpercent_perstate <- speciespark2 %>% 
+  separate(State, c("State1", "State2", "State3"), sep = ", ") %>% 
+  pivot_longer(cols = c(State1, State2, State3), 
+               names_to = "State Type", 
+               values_to = "State") %>% 
+  filter(!is.na(State)) %>% 
+  group_by(State, `Conservation Status`) %>% 
+  summarize(total_ofconcern = n()) %>% 
+  mutate(total_species_perstate = sum(total_ofconcern)) %>% 
+  ungroup() %>% 
+  mutate(percent = (total_ofconcern/total_species_perstate)*100) %>% 
+  filter(`Conservation Status` != "Not of Concern")
+
+statevaluesmap_perc <- concernpercent_perstate %>% 
+  full_join(states) %>% 
+   mutate(state_name = str_to_lower(abbr2state(State)))
+
+# GRAPHS START
+
+statevaluesmap_perc %>%
+  ggplot() +
+  geom_map(
+    map = fifty_states,
+    aes(
+      map_id = state_name,
+      fill = percent
+    )
+  ) +
+  expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
+  labs(fill = "Percent\nSpecies of\nConcern", title = "Percent Species of Concern per State") +
+  theme_void()
+```  
+
+The numbers here are low, but that is to be expected, as we already know that most species are not of concern. What this trend shows, though, is that Alaska still has few species of concern, with a percentage just above 3% species of concern, whereas California is much higher, with the other southwestern states at just about 6% species of concern.  
+
+One of the standout states in this map is New Mexico, but since it only has one national park, its high percentage is not as important.  
+
+What these maps together show is that California has a high proportion of species of concern when compared to other states.   
+
+## Conclusion
+Factoring in how many parks the state has as well as the indicator of how many species of birds there are in California, it is safe to conclude that California is in the greatest need of support. While California might not have the worst numbers for species of concern across the board, it is doing not well in every category, showing the highest total and both high averages and percentages. These numbers are especially striking when compared to Alaska which has the same number of parks and has some of the lowest numbers for species of concern across all categories.  
+
+What this suggests to us is that California could be doing much better, and that it needs more support than any other stet to get past its environmental issues.  
+
+Here is a heat map of California which shows the density of species of concern across the state. This map shows that [PLEASE FILL IN WHAT THIS MAP REPRESENTS, GWEN]  
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+californiaconclusion <- read_csv("Biodiversity/californiaconclusion.csv")
+
+caliconc <- californiaconclusion %>% 
+  select(c('Park Code', 'Park', '# Endangered Species', 'Latitude', 'Longitude'))
+
+# Obtaining the map tile
+
+US_map2 <- get_stamenmap(
+  bbox = c(left = -125, bottom = 33, right = -115, top = 45),
+  maptype = "terrain",
+  zoom = 7
+)
+
+# Putting the heat map on the tile
+
+ggmap(US_map2) +
+  geom_density_2d(data = caliconc, aes(x = Longitude, y = Latitude), size = 0.3) +
+  stat_density_2d(data = caliconc, aes(x = Longitude, y = Latitude, fill = stat(level)), size = 0.05, alpha = .1, bins = 10, geom = "polygon", color = 'darkblue') +
+  scale_alpha(guide = 'none') +
+  scale_fill_gradient(low = "darkblue", high = "red", guide = 'none')
+```  
+
+> It is our recommendation, then, for the National Parks Service to focus their support on California.
+
+---  
 
 ## Appendix
 Here is all of the code used in this report.
@@ -639,6 +797,57 @@ geom_col(aes(y = reorder(Category, total), x=total, fill=`Conservation Status`),
                                    face = "bold")) 
 ```  
 
+### Most Common Species Category per State Map
+```
+statecategories <- speciesnew %>% 
+  filter(Category != "Vascular Plant") %>% 
+  group_by(`Park Name`, Category) %>% 
+  left_join(parks) %>% select(`Park Code`, `Park Name`, State, Acres, Category) %>% 
+  separate(State, c("State1", "State2", "State3"), sep = ", ") %>% 
+  pivot_longer(cols = c(State1, State2, State3), names_to = "State Type", values_to = "State") %>% 
+  filter(!is.na(State)) %>% 
+  group_by(State, Category) %>% 
+  summarize(count = n()) %>% 
+  
+  # Now we do an inefficient but accurate method of pulling out the highest categories
+  
+  filter(count %in% c(1359, 300, 897, 2130, 811, 1225, 2149, 1564, 269, 243, 244, 230, 1754, 644, 159, 606, 242, 147, 473, 426, 649, 987, 712, 682, 1715, 359)) %>% 
+  
+  # Now we join it to make it work as a map
+  
+  full_join(states) %>% 
+  mutate(state_name = str_to_lower(abbr2state(State)))
+
+# GRAPHS START
+
+statecategories %>% 
+  ggplot() +
+  geom_map(
+    map = fifty_states,
+    aes(
+      map_id = state_name,
+      fill = Category
+    ), color = "black"
+  ) + 
+  expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
+  labs(fill = "Species\nCategory", title = "Most Common Species Category per State") +
+  theme_void()
+```  
+
+### # of Bird Species per State Map
+```
+statecategories %>% 
+  filter(Category == "Bird") %>% 
+  ggplot() + 
+  geom_bar(
+    aes(
+      x = fct_reorder(State, count), 
+      y = count
+    ), stat = "identity"
+  ) + 
+  labs(x = "State", y = "# of Species", title = "How Many Bird Species Are There In States\nWhere Birds Are The Most Common Category?")
+```  
+
 ### # of Parks per State Map
 ```
 parkstate <- speciesendanger %>% 
@@ -681,7 +890,7 @@ statevaluesmap %>%
   theme_void()
 ```  
 
-## Total Species of Concern per State Map
+### Total Species of Concern per State Map
 ```
 statevaluesmap %>%
   ggplot() +
@@ -697,7 +906,7 @@ statevaluesmap %>%
   theme_void()
 ```  
 
-## Average Species of Concern per State Map
+### Average Species of Concern per State Map
 ```
 statevaluesmap %>%
   ggplot() +
@@ -711,4 +920,84 @@ statevaluesmap %>%
   expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
   labs(fill = "Avg. #\nSpecies of\nConcern", title = "Average Species of Concern per State") +
   theme_void()
+```  
+
+### Percent Species of Concern per State Map
+```
+concernpercent <- speciesnew %>% 
+  group_by(Category, `Conservation Status`) %>% 
+  summarize(total_ofconcern = n()) %>% 
+  mutate(total_species = sum(total_ofconcern)) %>% 
+  ungroup() %>% 
+  mutate(percent = (total_ofconcern/total_species)*100) %>% 
+  filter(`Conservation Status` != "Not of Concern")
+
+speciespark <- parks %>% 
+  full_join(species)
+
+speciespark2 <- speciespark %>% 
+filter(Occurrence != "Not Confirmed", 
+       !Abundance %in% c("Native", "Not Native"), 
+       !`Conservation Status` %in% c("Under Review", "In Recovery", "Extinct")) %>% 
+  
+  # Renaming the species of concern into the binary categories
+  
+  mutate(`Conservation Status` = case_when(`Conservation Status` %in% c("Species of Concern", "Endangered", "Threatened", "Proposed Threatened", "Proposed Endangered") ~ "Species of Concern")) %>% 
+  mutate(`Conservation Status` = replace_na(`Conservation Status`, "Not of Concern")) 
+
+concernpercent_perstate <- speciespark2 %>% 
+  separate(State, c("State1", "State2", "State3"), sep = ", ") %>% 
+  pivot_longer(cols = c(State1, State2, State3), 
+               names_to = "State Type", 
+               values_to = "State") %>% 
+  filter(!is.na(State)) %>% 
+  group_by(State, `Conservation Status`) %>% 
+  summarize(total_ofconcern = n()) %>% 
+  mutate(total_species_perstate = sum(total_ofconcern)) %>% 
+  ungroup() %>% 
+  mutate(percent = (total_ofconcern/total_species_perstate)*100) %>% 
+  filter(`Conservation Status` != "Not of Concern")
+
+statevaluesmap_perc <- concernpercent_perstate %>% 
+  full_join(states) %>% 
+   mutate(state_name = str_to_lower(abbr2state(State)))
+
+# GRAPHS START
+
+statevaluesmap_perc %>%
+  ggplot() +
+  geom_map(
+    map = fifty_states,
+    aes(
+      map_id = state_name,
+      fill = percent
+    )
+  ) +
+  expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
+  labs(fill = "Percent\nSpecies of\nConcern", title = "Percent Species of Concern per State") +
+  theme_void()
+```  
+
+### California Heat Map
+```
+californiaconclusion <- read_csv("Biodiversity/californiaconclusion.csv")
+
+caliconc <- californiaconclusion %>% 
+  select(c('Park Code', 'Park', '# Endangered Species', 'Latitude', 'Longitude'))
+
+# Obtaining the map tile
+
+US_map2 <- get_stamenmap(
+  bbox = c(left = -125, bottom = 33, right = -115, top = 45),
+  maptype = "terrain",
+  zoom = 7
+)
+
+# Putting the heat map on the tile
+
+ggmap(US_map2) +
+  geom_density_2d(data = caliconc, aes(x = Longitude, y = Latitude), size = 0.3) +
+  stat_density_2d(data = caliconc, aes(x = Longitude, y = Latitude, fill = stat(level)), size = 0.05, alpha = .1, bins = 10, geom = "polygon", color = 'darkblue') +
+  scale_alpha(guide = 'none') +
+  scale_fill_gradient(low = "darkblue", high = "red", guide = 'none')
 ```  
