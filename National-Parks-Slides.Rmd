@@ -64,12 +64,7 @@ speciesnew <- species %>%
 ```
 
 
-## Conservation Efforts
-
-- The National Park Service
-- Individual States
-
-## 1
+## National Parks in the US
 
 ```{r VIZ 1, echo = FALSE, message = FALSE, warning = FALSE}
 
@@ -138,7 +133,66 @@ m  # Print the map
 
 ```
 
-## 2
+
+## Number of Plants and Animals 
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+speciesnewabundance2 <- speciesnew %>% 
+   filter(!is.na(`Abundance`)) %>% 
+  group_by(Category, Abundance, `Conservation Status`) %>% 
+  summarize(total = n()) 
+  
+speciesnewabundance2 %>% group_by(Category) %>% 
+  mutate(Grandtotal = sum(total)) %>% 
+  ungroup() %>% # We want to redefine Category, so we have to ungroup it first
+  mutate(Category = fct_reorder(Category, Grandtotal)) %>% 
+  ggplot() + 
+  geom_col(aes(y = Category, x = total)) +
+  labs(y = " ", x = "Total Count") +
+
+  # Hereafter are the theme details
+  
+  # Making the background
+  theme(panel.background = element_rect(fill = "white", 
+                                        colour = "white", 
+                                        linewidth = 2, 
+                                        linetype = "solid"),
+        panel.grid.major = element_line(linewidth = 0.5, 
+                                        linetype = 'solid',
+                                        colour = "white"), 
+        panel.grid.minor = element_line(linewidth = 0.25, 
+                                        linetype = 'solid',
+                                        colour = "white")) +
+  
+  # Affecting text attributes
+  theme(axis.text.y = element_text(color = "grey27"),
+        axis.text.x = element_text(size = 10, color = "grey27"), 
+        axis.ticks.y = element_blank(), 
+        plot.title = element_text(face = "bold", 
+                                  size = 17, 
+                                  hjust = 0.5, 
+                                  color = "grey27"), 
+        plot.subtitle = element_text(face = "italic", 
+                                     size = 10, 
+                                     hjust = 0.5, 
+                                     color = "grey27"), 
+        plot.caption = element_text(face = "italic", 
+                                    color = "grey27")) + 
+  
+  # Affecting axis text attributes
+  theme(axis.title.y=element_text(colour="grey27", 
+                                  face = "bold")) +
+  theme(axis.title.x=element_text(colour="grey27", 
+                                   face = "bold"))
+
+```  
+
+## Conservation Efforts
+
+- The National Park Service
+- Individual States
+
+## Level of Concern of Species in National Parks
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 graph2 <- speciesnew %>% 
@@ -213,7 +267,7 @@ geom_col(aes(y = reorder(Category, total), x=total, fill=`Conservation Status`),
 ```
 
 
-## 3
+## How Often Are Species Assigned Each Conservation Status?
 
 ```{r include=FALSE}
 ## John
@@ -250,7 +304,7 @@ spc <- ggplot(speciesconservationviz, aes(x = "", y = perc, fill = reorder(`Cons
                     breaks = c("Species of Concern", "Endangered", "Under Review", "Threatened", "In Recovery", "Proposed Endangered", "Proposed Threatened", "Extinct")) +
   geom_text(aes(y = ypos), color = "white", size = 6, check_overlap = TRUE) + 
     labs(fill = "Conservation Status", 
-         title = "How Often Are Species Assigned Each Conservation Status?")
+         title = " ")
 
 spc
 ```
