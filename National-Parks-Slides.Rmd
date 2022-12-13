@@ -191,6 +191,7 @@ speciesnewabundance2 %>% group_by(Category) %>%
 
 - The National Park Service
 - Individual States
+- Funding
 
 ## How Often Are Species Assigned Each Conservation Status?
 
@@ -307,8 +308,119 @@ geom_col(aes(y = reorder(Category, total), x=total, fill=`Conservation Status`),
 
 ```
 
+## Maps
+
+```{r VIZ 6, include= FALSE}
+
+speciespark <- parks %>% 
+  full_join(species)
+
+speciespark2 <- speciespark %>% 
+filter(Occurrence != "Not Confirmed", !Abundance %in% c("Native", "Not Native"), !`Conservation Status` %in% c("Under Review", "In Recovery", "Extinct")) %>% 
+  mutate(`Conservation Status` = case_when(`Conservation Status` %in% c("Species of Concern", "Endangered", "Threatened", "Proposed Threatened", "Proposed Endangered") ~ "Species of Concern")) %>% 
+  mutate(`Conservation Status` = replace_na(`Conservation Status`, "Not of Concern")) 
+
+concernpercent_perstate <- speciespark2 %>% 
+  separate(State, c("State1", "State2", "State3"), sep = ", ") %>% 
+  pivot_longer(cols = c(State1, State2, State3), names_to = "State Type", values_to = "State") %>% 
+  filter(!is.na(State)) %>% 
+  group_by(State, `Conservation Status`) %>% 
+  summarize(total_ofconcern = n()) %>% 
+  mutate(total_species_perstate = sum(total_ofconcern)) %>% 
+  ungroup() %>% 
+  mutate(percent = (total_ofconcern/total_species_perstate)*100) %>% 
+  filter(`Conservation Status` != "Not of Concern")
+
+parkstate <- speciesendanger %>% 
+  group_by(`Park Name`, `Conservation Status`) %>% 
+  summarize(count = n()) %>% 
+  pivot_wider(names_from = `Conservation Status`, values_from = count, values_fill = 0) %>% 
+  left_join(parks) %>% 
+  select(`Park Code`, `Park Name`, State, Acres, Endangered, `In Recovery`, `Species of Concern`, `Under Review`, Threatened, `Proposed Threatened`, Extinct, `Proposed Endangered`) %>% 
+  separate(State, c("State1", "State2", "State3"), sep = ", ") %>% 
+  pivot_longer(cols = c(State1, State2, State3), names_to = "State Type", values_to = "State") %>% 
+  filter(!is.na(State))
+
+statevalues <- parkstate %>% 
+  group_by(State) %>% 
+  summarize(Concern = sum(`Species of Concern`), ConcernAvg = mean(`Species of Concern`), Count = n()) %>% 
+  mutate(ConcernAvg = round(ConcernAvg, 2))
+
+statevaluesmap <- statevalues %>% 
+  full_join(states) %>% 
+   mutate(state_name = str_to_lower(abbr2state(State)))
+
+statevaluesmap_perc <- concernpercent_perstate %>% 
+  full_join(states) %>% 
+   mutate(state_name = str_to_lower(abbr2state(State)))
+```
 
 
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+#Average Number of Species of Concern per State
+
+concernavg <- statevaluesmap %>%
+  ggplot() +
+  geom_map(
+    map = fifty_states,
+    aes(
+      map_id = state_name,
+      fill = ConcernAvg
+    )
+  ) +
+  expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
+  labs(fill = "Avg. #\nSpecies of\nConcern") +
+  theme_void()
+
+#Total Number of Species of Concern per State
+
+concerncount <- statevaluesmap %>%
+  ggplot() +
+  geom_map(
+    map = fifty_states,
+    aes(
+      map_id = state_name,
+      fill = Concern
+    )
+  ) +
+  expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
+  labs(fill = "Total Species\nof Concern") +
+  theme_void()
+
+#Total Number of Parks per State
+
+parkcount <- statevaluesmap %>%
+  ggplot() +
+  geom_map(
+    map = fifty_states,
+    aes(
+      map_id = state_name,
+      fill = Count
+    )
+  ) +
+  expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
+  labs(fill = "# of\nParks") +
+  theme_void()
+
+#Percent of Species of Concern vs. Not of Concern per State
+
+concernperc <- statevaluesmap_perc %>%
+  ggplot() +
+  geom_map(
+    map = fifty_states,
+    aes(
+      map_id = state_name,
+      fill = percent
+    )
+  ) +
+  expand_limits(x = map_data("state")$long, y = map_data("state")$lat) + 
+  labs(fill = "Percent\nSpecies of\nConcern") +
+  theme_void()
+
+ggarrange(
+  parkcount, concerncount, concernavg, concernperc, ncol = 2, nrow = 2)
+
+```
 
 
 ## Conclusion
