@@ -192,6 +192,47 @@ speciesnewabundance2 %>% group_by(Category) %>%
 - The National Park Service
 - Individual States
 
+## How Often Are Species Assigned Each Conservation Status?
+
+```{r include=FALSE}
+## John
+
+specieslargeviz <- speciesendanger %>% 
+  filter(!is.na(Abundance)) %>% 
+  group_by(Abundance, `Conservation Status`) %>% 
+  summarize(count = n()) %>% 
+  filter(!is.na(`Conservation Status`))
+
+speciesconservationviz <- speciesendanger %>% 
+  group_by(`Conservation Status`) %>% 
+  summarize(count = n()) %>% 
+  filter(!is.na(`Conservation Status`)) %>% 
+  arrange(desc(count)) %>% 
+  mutate(perc = (count / sum(count)) * 100) %>% 
+  mutate(ypos = cumsum(perc)- 0.4*perc ) %>% 
+  mutate(perc2 = round(perc, 1)) %>% 
+  mutate(perc3 = paste0(perc2, "%"))
+
+speciesabundanceviz <- speciesendanger %>% 
+  filter(!is.na(Abundance)) %>% 
+  group_by(Abundance) %>% 
+  summarize(count = n())
+```
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+spc <- ggplot(speciesconservationviz, aes(x = "", y = perc, fill = reorder(`Conservation Status`, count), label = perc3)) +
+  geom_bar(stat = "identity", width = 1, color = "white") + 
+  coord_polar("y", start = 0) + 
+  theme_void() + 
+  scale_fill_manual(values = c("#8F0F1B", "#BE3ACD", "#304F9B", "#C7DD91", "#48A421", "#69EF7B", "#11CCDC", "black"),
+                    breaks = c("Species of Concern", "Endangered", "Under Review", "Threatened", "In Recovery", "Proposed Endangered", "Proposed Threatened", "Extinct")) +
+  geom_text(aes(y = ypos), color = "white", size = 6, check_overlap = TRUE) + 
+    labs(fill = "Conservation Status", 
+         title = " ")
+
+spc
+```
+
 ## Level of Concern of Species in National Parks
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
@@ -267,47 +308,7 @@ geom_col(aes(y = reorder(Category, total), x=total, fill=`Conservation Status`),
 ```
 
 
-## How Often Are Species Assigned Each Conservation Status?
 
-```{r include=FALSE}
-## John
-
-specieslargeviz <- speciesendanger %>% 
-  filter(!is.na(Abundance)) %>% 
-  group_by(Abundance, `Conservation Status`) %>% 
-  summarize(count = n()) %>% 
-  filter(!is.na(`Conservation Status`))
-
-speciesconservationviz <- speciesendanger %>% 
-  group_by(`Conservation Status`) %>% 
-  summarize(count = n()) %>% 
-  filter(!is.na(`Conservation Status`)) %>% 
-  arrange(desc(count)) %>% 
-  mutate(perc = (count / sum(count)) * 100) %>% 
-  mutate(ypos = cumsum(perc)- 0.4*perc ) %>% 
-  mutate(perc2 = round(perc, 1)) %>% 
-  mutate(perc3 = paste0(perc2, "%"))
-
-speciesabundanceviz <- speciesendanger %>% 
-  filter(!is.na(Abundance)) %>% 
-  group_by(Abundance) %>% 
-  summarize(count = n())
-```
-
-
-```{r echo = FALSE, message = FALSE, warning = FALSE}
-spc <- ggplot(speciesconservationviz, aes(x = "", y = perc, fill = reorder(`Conservation Status`, count), label = perc3)) +
-  geom_bar(stat = "identity", width = 1, color = "white") + 
-  coord_polar("y", start = 0) + 
-  theme_void() + 
-  scale_fill_manual(values = c("#8F0F1B", "#BE3ACD", "#304F9B", "#C7DD91", "#48A421", "#69EF7B", "#11CCDC", "black"),
-                    breaks = c("Species of Concern", "Endangered", "Under Review", "Threatened", "In Recovery", "Proposed Endangered", "Proposed Threatened", "Extinct")) +
-  geom_text(aes(y = ypos), color = "white", size = 6, check_overlap = TRUE) + 
-    labs(fill = "Conservation Status", 
-         title = " ")
-
-spc
-```
 
 
 ## Conclusion
