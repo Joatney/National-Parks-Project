@@ -574,3 +574,29 @@ ggplotly(p)
 
 ```
 
+
+```{r}
+
+library(ggmap)
+library(dplyr)
+
+californiaconclusion <- read_csv("Biodiversity/californiaconclusion.csv")
+
+caliconc <- californiaconclusion %>% 
+  select(c('Park Code', 'Park', '# Endangered Species', 'Latitude', 'Longitude'))
+
+US_map2 <- get_stamenmap(
+  bbox = c(left = -125, bottom = 33, right = -115, top = 45),
+  maptype = "terrain",
+  zoom = 7
+)
+
+ggmap(US_map2) +
+  geom_density_2d(data = caliconc, aes(x = Longitude, y = Latitude), size = 0.3) +
+  stat_density_2d(data = caliconc, aes(x = Longitude, y = Latitude, fill = stat(level)), size = 0.05, alpha = .1, bins = 10, geom = "polygon", color = 'darkblue') +
+  scale_alpha(guide = 'none') +
+  scale_fill_gradient(low = "darkblue", high = "red", guide = 'none')
+
+  
+    
+```
