@@ -63,12 +63,12 @@ speciesnew <- species %>%
   mutate(`Conservation Status` = replace_na(`Conservation Status`, "Not of Concern"))
 ```
 
-# Our Big Question
+## Our Big Question
 When we first looked at the ["Biodiversity in National Parks"](https://www.kaggle.com/datasets/nationalparkservice/park-biodiversity) data set, we were drawn to a variable stating each species's conservation status. We thought to ourselves, how many of these species are of concern? Are certain parks doing worse than others? Are certain states? Eventually, we decided on a question to focus on:
 
 > Is there any state that needs more support in conserving its national parks' wildlife than others?  
 
-# America's National Parks
+## America's National Parks
 There are 63 congressionally delegated national parks in the United States as of 2022, each an area of land protected by the National Park Service. The data set we used for this project only focuses on 56 of these national parks. Some of these are excluded because the data set was uploaded to the repository in 2016, before several of them were established. Others are excluded because the data set focuses only on national parks in the United States and not on those in the territories. The 56 national parks that are included in the data set are mapped out here:  
 
 ```{r echo = FALSE}
@@ -197,12 +197,12 @@ Something easily noticed in this graph is that the category "Vascular Plants" is
 
 Because there are so many species of vascular plant in the data set, we had to remove them from certain data sets so that we could look more closely at trends.
 
-# Conservation Efforts
+## Conservation Efforts
 The National Parks Service which runs all of the national parks in the United States is federally controlled and federally funded. The service is a bureau of the U.S. Department of the Interior, and it is headed by a Director appointed by the President and confirmed by the U.S. Senate.^[https://www.nps.gov/aboutus/index.htm] This Director creates the budget for the national parks, sets programs, and creates policies regarding the parks. If there is anybody who is able to help get funds and support to the parks that need it most, it's the Director of the National Parks Service.  
 
 It is also important to note that every state gets its own budget from the federal government, and a portion of every state's budget goes toward environmental upkeep. So, there is an efficacy to focusing on states rather than just individual parks.  
 
-# Grouping Issues
+## Grouping Issues
 Knowing all of this national parks information and having a question in hand, we began working with the data. Particularly, we focused on the Conservation Status variable. In the code book for the data set, the variable is listed as using the IUCN conservation status categories.^[https://www.iucnredlist.org/ (under "The IUCN Red List Categories and Criteria")] These categories are: *Not Evaluated, Data Deficient, Least Concern, Near Threatened, Vulnerable, Endangered, Critically Endangered, Extinct in the Wild,* and *Extinct*. They show a clear progression from least to most concern and would be incredibly helpful as categories for our research purposes. The problem is, though, that the data set is not actually using those categories! What we have instead is: *Under Review, In Recovery, Proposed Threatened, Threatened, Proposed Endangered, Endangered, Species of Concern,* and *Extinct*.  
 
 What is worse is the distribution of the categories:
