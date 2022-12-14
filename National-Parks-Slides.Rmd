@@ -138,7 +138,8 @@ m  # Print the map
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 speciesnewabundance2 <- speciesnew %>% 
-   filter(!is.na(`Abundance`)) %>% 
+  filter(!is.na(`Abundance`), Abundance != 'Unknown') %>% 
+  filter(Occurrence != "Not Confirmed") %>% 
   group_by(Category, Abundance, `Conservation Status`) %>% 
   summarize(total = n()) 
   
@@ -186,6 +187,10 @@ speciesnewabundance2 %>% group_by(Category) %>%
                                    face = "bold"))
 
 ```  
+
+## Research Question
+
+Is there any state that needs more support in conserving its national parks' wildlife than others?
 
 ## Conservation Efforts
 
@@ -235,17 +240,15 @@ spc
 
 ## How Much Concern Are Species Under?
 
+
+
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 graph2 <- speciesnew %>% 
  filter(!is.na(Abundance), Abundance != 'Unknown') %>% 
   filter(Occurrence != "Not Confirmed") %>% 
    group_by(Category, Abundance, `Conservation Status`) %>% 
   summarize(total = n()) %>% 
-  mutate(`Conservation Status` = replace_na(`Conservation Status`, "Not Threatened or Endagered")) %>% 
-  filter(total > 10) 
-
-graph3 <- graph2 %>% 
-  filter(Category != "Vascular Plant")
+  mutate(`Conservation Status` = replace_na(`Conservation Status`, "Not Threatened or Endagered"))
 
 
 #GRAPHS START
