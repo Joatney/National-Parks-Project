@@ -64,7 +64,9 @@ speciesnew <- species %>%
 ```
 
 
-## National Parks in the US
+## 
+
+<font size = 50 font color = "black">**National Parks in the US**</font>
 
 ```{r VIZ 1, echo = FALSE, message = FALSE, warning = FALSE}
 
@@ -134,7 +136,9 @@ m  # Print the map
 ```
 
 
-## Number of Plants and Animals 
+## 
+
+<font size = 50 font color = "black">**Number of Plants and Animals**</font> 
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 speciesnewabundance2 <- speciesnew %>% 
@@ -188,17 +192,28 @@ speciesnewabundance2 %>% group_by(Category) %>%
 
 ```  
 
-## Research Question
+## 
+
+<font size = 50 font color = "black">**Research Question**</font>
 
 Is there any state that needs more support in conserving its national parks' wildlife than others?
 
-## Conservation Efforts
+## 
 
-- The National Park Service
-- Individual States
-- Funding
+<font size = 50 font color = "black">**Conservation Efforts**</font>
 
-## How Often Are Species Assigned Each Conservation Status?
+* <font size = 6.7 font color = "black">**Department of the Interior**</font>
+  + <font color = "black">National Park Service</font>
+    - <font color = "black">The Director</font>
+
+* <font size = 6.7 font color = "black">**Federal Funding for States**</font>
+  + <font color = "black">State Budget Allocation</font>
+    - <font color = "black">Environmental Spending</font>  
+
+
+## 
+
+<font size = 50 font color = "black">**How Often Are Species Assigned Each Conservation Status?**</font>
 
 ```{r include=FALSE}
 
@@ -238,7 +253,9 @@ spc <- ggplot(speciesconservationviz, aes(x = "", y = perc, fill = reorder(`Cons
 spc
 ```
 
-## How Much Concern Are Species Under?
+## 
+
+<font size = 50 font color = "black">**How Much Concern Are Species Under?**</font>
 
 
 
@@ -310,7 +327,9 @@ geom_col(aes(y = reorder(Category, total), x=total, fill=`Conservation Status`),
 
 ```
 
-## Birds as an Indicator of Concern
+## 
+
+<font size = 50 font color = "black">**Birds as an Indicator of Concern**</font>
 
 ```{r include = FALSE}
 speciespark <- parks %>% 
@@ -390,7 +409,9 @@ statecategories %>%
   theme_void()
 ```
 
-## Birds as an Indicator of Concern
+## 
+
+<font size = 50 font color = "black">**Birds as an Indicator of Concern**</font>
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 statecategories %>% 
@@ -405,7 +426,9 @@ statecategories %>%
   labs(x = "State", y = "# of Species", title = "How Many Bird Species Are There In States\nWhere Birds Are The Most Common Category?")
 ```
 
-## How Is Each State Doing?
+## 
+
+<font size = 50 font color = "black">**How Is Each State Doing?**</font>
 
 ```{r VIZ 6, include= FALSE}
 statevaluesmap <- statevalues %>% 
@@ -485,7 +508,9 @@ ggarrange(
 ```
 
 
-## Conclusion
+## 
+
+<font size = 50 font color = "black">**Conclusion**</font>
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 
