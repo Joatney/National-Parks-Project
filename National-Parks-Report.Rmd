@@ -143,7 +143,8 @@ This data set shows off the immense biodiversity in these national parks, with o
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 speciesnewabundance2 <- speciesnew %>% 
-   filter(!is.na(`Abundance`)) %>% 
+  filter(!is.na(`Abundance`), Abundance != 'Unknown') %>% 
+  filter(Occurrence != "Not Confirmed") %>% 
   group_by(Category, Abundance, `Conservation Status`) %>% 
   summarize(total = n()) 
   
@@ -658,7 +659,8 @@ m  # Print the map
 ### Species Categories Bar Chart
 ```
 speciesnewabundance2 <- speciesnew %>% 
-   filter(!is.na(`Abundance`)) %>% 
+  filter(!is.na(`Abundance`), Abundance != 'Unknown') %>% 
+  filter(Occurrence != "Not Confirmed") %>% 
   group_by(Category, Abundance, `Conservation Status`) %>% 
   summarize(total = n()) 
   
