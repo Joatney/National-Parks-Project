@@ -543,4 +543,4 @@ ggmap(US_map2) +
     
 ```
 
-California needs a majority of the National Park Service's conservation Efforts.
+California requires a majority of the National Park Service's conservation efforts.
