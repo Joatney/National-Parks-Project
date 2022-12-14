@@ -508,7 +508,12 @@ ggmap(US_map2) +
   stat_density_2d(data = caliconc, aes(x = Longitude, y = Latitude, fill = stat(level)), size = 0.05, alpha = .2, bins = 10, geom = "polygon", color = 'darkblue') +
   scale_alpha(guide = 'none') +
   scale_fill_gradient(low = "darkblue", high = "red", guide = 'none') +
-  labs(title = "Density of Endangered Species\nby National Park in California")
+  labs(title = "Density of Endangered Species\nby National Park in California") +
+  theme(axis.title.y=element_blank()) +
+  theme(axis.title.x= element_blank()) +
+  theme(axis.ticks.y = element_blank()) +
+  theme(axis.ticks.x = element_blank())
+
 
     
 ```
