@@ -484,7 +484,6 @@ ggarrange(
 
 ## Conclusion
 
-- California
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 
 library(ggmap)
@@ -502,11 +501,13 @@ US_map2 <- get_stamenmap(
 )
 
 ggmap(US_map2) +
-  geom_density_2d(data = caliconc, aes(x = Longitude, y = Latitude), size = 0.3) +
+  geom_density_2d(data = caliconc, aes(x = Longitude, y = Latitude, ), size = 0.3) +
   stat_density_2d(data = caliconc, aes(x = Longitude, y = Latitude, fill = stat(level)), size = 0.05, alpha = .2, bins = 10, geom = "polygon", color = 'darkblue') +
   scale_alpha(guide = 'none') +
-  scale_fill_gradient(low = "darkblue", high = "red") +
-  labs(x = "Longitude", y = "Latitude", title = "Density of Endangered Species by National Park in California" )
+  scale_fill_gradient(low = "darkblue", high = "red", guide = 'none') +
+  labs(title = "Density of Endangered Species\nby National Park in California")
 
     
 ```
+
+-
