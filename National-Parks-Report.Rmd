@@ -529,11 +529,13 @@ One of the standout states in this map is New Mexico, but since it only has one 
 What these maps together show is that California has a high proportion of species of concern when compared to other states.   
 
 ## Conclusion
+
+Here is a heat map of California which shows the density of species of concern across the state. This map shows a correlation to one of the most problematic - highly populated and heavily polluted - locations in the country, and the only one of those locations where there is a National Park present. Because of that, we see that there is the most amount of concern regarding endangered animals in Southern California with the most 142 species of concern in Channel Islands National Park which is located just outside of Los Angeles. We find from this map that there is correlation, which hints at a causation, towards human development being the root cause of the diminishment of global biodiversity. Because we have all of this information, we can now conclude where the National Park Service should direct a majority of their funds. 
+
 Factoring in how many parks the state has as well as the indicator of how many species of birds there are in California, it is safe to conclude that California is in the greatest need of support. While California might not have the worst numbers for species of concern across the board, it is doing not well in every category, showing the highest total and both high averages and percentages. These numbers are especially striking when compared to Alaska which has the same number of parks and has some of the lowest numbers for species of concern across all categories.  
 
 What this suggests to us is that California could be doing much better, and that it needs more support than any other stet to get past its environmental issues.  
 
-Here is a heat map of California which shows the density of species of concern across the state. This map shows that [PLEASE FILL IN WHAT THIS MAP REPRESENTS, GWEN]  
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 californiaconclusion <- read_csv("Biodiversity/californiaconclusion.csv")
