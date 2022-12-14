@@ -139,7 +139,7 @@ m <- leaflet() %>%
 m  # Print the map
 ```  
 
-This data set shows off the immense biodiversity in these national parks, with over forty thousand unique species of plants and animals found across all 56 of the parks. Overwhelmingly, the species recorded by the National Park Service are plants, as shown below:  
+This data set shows off the immense biodiversity in these national parks, with over forty thousand unique species of plants and animals found across all 56 of the parks. Vascular plants make up the majority of species recorded by the National Park Service, as shown below:  
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 speciesnewabundance2 <- speciesnew %>% 
@@ -194,14 +194,14 @@ speciesnewabundance2 %>% group_by(Category) %>%
                                    face = "bold"))
 ```  
 
-What this graph represents is the presence of a certain category of species in a park. Some of the species appear more than once (certain types of trees are going to be present in almost all of the parks!), which brings the total over the number of unique species.  
+This graph represents the presence of a certain category of species in a park.  
 
-Something easily noticed in this graph is that the category "Vascular Plants" is represented overwhelmingly more than the other categories of species. Because this category includes ferns, flowers, and (you guessed it) trees, it is bound to be the highest category. Not only are there lots of trees in national parks, there are often lots of different types of trees! Conservation organizations like the IUCN or the National Parks Services often focus their efforts of maintaining biodiversity in trees and other vascular plants, so it only makes sense that there are so many represented here.  
+Your eyes may be drawn to the category "Vascular Plants" which is recorded overwhelmingly more than the other categories of species. Because this category includes ferns, flowers, trees, and trees, it is understandable why it might account for so many different species. Not only are there lots of trees in national parks, there are often lots of different types of trees (with an estimated 60,000+ species of trees found globally). Conservation organizations like the IUCN or the National Parks Services often focus their efforts of maintaining biodiversity in trees and other vascular plants, partially because there are simply so many of them.  
 
-Because there are so many species of vascular plant in the data set, we had to remove them from certain data sets so that we could look more closely at trends.
+Because there are so many species of vascular plant in the original data set, we had to remove them from later analysis so that we could look more closely at trends.
 
 ## Conservation Efforts
-The National Parks Service which runs all of the national parks in the United States is federally controlled and federally funded. The service is a bureau of the U.S. Department of the Interior, and it is headed by a Director appointed by the President and confirmed by the U.S. Senate.^[https://www.nps.gov/aboutus/index.htm] This Director creates the budget for the national parks, sets programs, and creates policies regarding the parks. If there is anybody who is able to help get funds and support to the parks that need it most, it's the Director of the National Parks Service.  
+The National Parks Service, which runs all of the national parks in the United States, is federally controlled and federally funded. The service is a bureau of the U.S. Department of the Interior, and it is headed by a Director appointed by the President and confirmed by the U.S. Senate.^[https://www.nps.gov/aboutus/index.htm] This Director creates the budget for the national parks, sets programs, and creates policies regarding the parks. If there is anybody who is able to help get funds and support to the parks that need it most, it is the Director of the National Parks Service.  
 
 It is also important to note that every state gets its own budget from the federal government, and a portion of every state's budget goes toward environmental upkeep. So, there is an efficacy to focusing on states rather than just individual parks.  
 
@@ -233,12 +233,12 @@ ggplot(speciesconservationviz, aes(x = "", y = perc, fill = reorder(`Conservatio
          caption = "This data excludes any species that are not given a category.\n(Including species not in danger of extinction).")
 ```  
 
-Of all of the species that were assigned a conservation status, 83.4% of them were assigned Species of Concern! That number is too high to be normal. What seems to have happened is that the people in the National Parks Service who gathered the data used lay terms and general groupings when assigning conservation status. Some of them must have thrown any species of any concern category into "Species of Concern".  
+Of all of the species that were assigned a conservation status, 83.4% of them were assigned Species of Concern, which we thought was too high to be normal. What we assumed to have happened was that the people in the National Parks Service who gathered the data used lay terms and general groupings when assigning conservation status. Some of them must have thrown any species of any concern category into "Species of Concern" rather than a more specific grouping.  
 
 This poses a problem for our evaluation of concern, though, as we have no way of looking at the official categories in any meaningful way across the data set. To counter this issue, we wrangled the data and grouped these conservation status categories into two types: "Of Concern", composed of *Proposed Threatened, Threatened, Proposed Endangered, Endangered*, and *Species of Concern*; and "Not of Concern", composed of all NA values. The other categories, due to their small size and their lack of exact relation to either category, are ignored for considerations of concern.
 
 ## How Much Concern Are Species Under?
-Using our new binary category for conservation status, we can return to the categories from before. Because there are so many species of vascular plants represented in the national parks, it would be reasonable to assume that there would be a lot of vascular plant species of concern. With global warming and forest fires, trees are dying all over the globe. This graph shows that this is not the case, though!  
+Using our new binary category for conservation status, we can return to the categories from before. Because there are so many species of vascular plants represented in the national parks, it would be reasonable to assume that there would be a lot of vascular plant species of concern. With global warming and forest fires, trees are dying all over the globe. This graph shows that this is not the case, though:  
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 graph2 <- speciesnew %>% 
@@ -315,9 +315,9 @@ Vascular plants have a proportionally low number of species of concern. Now, the
 The same cannot be said for birds in national parks. The proportion of birds of concern to birds not of concern is higher than in any other category. It is still rather low, but one must remember that this is counting number of *species*, and not number of *individuals*. There are hundreds of species of birds that are under conservation concern and need assistance. These numbers being so much higher shows that birds are often in need of more support than other categories of species.  
 
 ## Birds As Indicators of Concern
-If birds are in greater need of support, then they could be used as an indicator of which parks (or for our purposes, which states) are most in need of support. Of course, the bird factor alone would not be enough to tell us for sure, but we knew that if we could find a state that favored birds, had a high proportion of species of concern, and had other factors making that state need support, we would have a well-founded idea of which state answers our question.  
+If birds are in greater need of support, then they could be used as an indicator of which parks (or for our purposes, which states) are most in need of support. Of course, the bird factor alone would not be enough to tell us for sure, but we knew that if we could find a state with a greater number of birds, had a high proportion of species of concern, and had other factors making that state need support, we would have a well-founded idea of which state answers our question.  
 
-So, the first thing we did was we looked at the category counts for each state, pulling out which was the highest. For thse purposes, we removed vascular plants, as we know already that they are not hugely of concern, and we could expect them to be the most common in every state if we kept them in.  
+So, the first thing we did was we looked at the category counts for each state, pulling out which was the highest. For these purposes, we removed vascular plants (because we know already that they are not hugely of concern and we could expect them to be the most common in every state if we kept them in).  
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 statecategories <- speciesnew %>% 
@@ -355,7 +355,7 @@ statecategories %>%
   theme_void()
 ```  
 
-Most states have more species of birds than anything else, which makes sense considering they were the second highest category after vascular plants. Several states showed other values, mainly in insects, but for the purposes of using birds as indicators of concern, we can exclude those states. They likely do not have enough birds to be important to this consideration.  
+Most states have more species of birds (compared to other categories) than anything else, which makes sense considering they were the second highest category after vascular plants. Several states showed other values, mainly in insects, but for the purposes of using birds as indicators of concern, we can exclude those states. They likely do not have enough birds to be important to this consideration.  
 
 Using just those states that have more species of birds than any other category, we looked at how many different species of birds were present in each state. It would be reasonable to assume that the state with the highest number of bird species would be in need of the most support since we are using birds as a sort of metric for concern.
 
@@ -372,7 +372,7 @@ statecategories %>%
   labs(x = "State", y = "# of Species", title = "How Many Bird Species Are There In States\nWhere Birds Are The Most Common Category?")
 ```  
 
-What this graph shows is that California has the highest number of bird species with over 2,000 species represented across its national parks. This first sign indicator suggests that California could be the state that needs the most financial support. Looking at more numeric indicators, we can focus on California and see whether the amount of concern lines up with the bird indicator.  
+This graph shows that, of states where birds are the most common species after vascular plants, California has the highest number of unique bird species with over 2,000 represented across its national parks. This suggests that California could be the state that needs the most financial support. Looking at more numeric indicators, we can focus on California and see whether the amount of concern lines up with this evidence.  
 
 ## Identifying Where Support Should Go
 We have already established how support gets delegated and change gets made in the National Parks Service, but where should the Director's support really get focused? You might think to focus on individual parks, but you should remember that states have their own budgets, and that some states have more parks than others. The National Parks Service could choose to focus their money and policy on a state-by-state level depending on which states need the most financial support.  
@@ -423,7 +423,7 @@ statevaluesmap %>%
   theme_void()
 ```  
 
-There are two states that are tied for having the highest number of parks: Alaska and California. Some states like Idaho and Colorado have a slightly higher amount, but no state is able to rival the eight parks in both Alaska and California. California now has two factors contributing to it with the bird indicator and the number of parks.  
+There are two states that are tied for having the highest number of parks: Alaska and California. Some states like Idaho and Colorado have a slightly higher amount compared to the rest, but no state is able to rival the eight parks in both Alaska and California. California now has two factors contributing to it: the bird indicator and the number of parks.  
 
 It is possible, then, that one of those two states is in need of the most support. Having that many parks must cost a lot of money! Considering, then, that Alaska and California have the highest number of parks, we looked at the number of species of concern on similar maps to see whether either of those two states had irregularly high numbers.  
 
@@ -444,7 +444,7 @@ statevaluesmap %>%
   theme_void()
 ```  
 
-This map shows that California, with a massive majority, has the highest number of species of concern: over 600 species of concern! This would make sense because having more parks would mean having more species, but Alaska does not show the same trend. In fact, Alaska is in the lower half of the range, with relatively few total species of concern. Perhaps, though, this is because Alaska's climate does not allow for a lot of diversity in species.  
+This map shows that California has the highest number of species of concern: over 600 -- which is a massive majority. This would make sense because having more parks would mean having more species, but Alaska does not show the same trend. In fact, Alaska is in the lower half of the range, with relatively few total species of concern. Perhaps, though, this is because Alaska's climate does not allow for a lot of diversity in species.  
 
 Maybe changing from a total to an average would make the trend closer between the two highest states:
 
@@ -522,20 +522,16 @@ statevaluesmap_perc %>%
   theme_void()
 ```  
 
-The numbers here are low, but that is to be expected, as we already know that most species are not of concern. What this trend shows, though, is that Alaska still has few species of concern, with a percentage just above 3% species of concern, whereas California is much higher, with the other southwestern states at just about 6% species of concern.  
+The numbers here are low, but that is to be expected, as we already know that most species are not of concern. What this trend shows, though, is that Alaska still has few species of concern, with a percentage just above 3% of total species, whereas California is much higher, with the other southwestern states at just about 6%.  
 
-One of the standout states in this map is New Mexico, but since it only has one national park, its high percentage is not as important.  
+One of the standout states in this map is New Mexico, but since it only has one national park, its high percentage is not as important. 
+Another standout is Utah, but because it does not stand out in any other visualization, we did not focus on this.
 
 What these maps together show is that California has a high proportion of species of concern when compared to other states.   
 
 ## Conclusion
 
 Here is a heat map of California which shows the density of species of concern across the state. This map shows a correlation to one of the most problematic - highly populated and heavily polluted - locations in the country, and the only one of those locations where there is a National Park present. Because of that, we see that there is the most amount of concern regarding endangered animals in Southern California with the most 142 species of concern in Channel Islands National Park which is located just outside of Los Angeles. We find from this map that there is correlation, which hints at a causation, towards human development being the root cause of the diminishment of global biodiversity. Because we have all of this information, we can now conclude where the National Park Service should direct a majority of their funds. 
-
-Factoring in how many parks the state has as well as the indicator of how many species of birds there are in California, it is safe to conclude that California is in the greatest need of support. While California might not have the worst numbers for species of concern across the board, it is doing not well in every category, showing the highest total and both high averages and percentages. These numbers are especially striking when compared to Alaska which has the same number of parks and has some of the lowest numbers for species of concern across all categories.  
-
-What this suggests to us is that California could be doing much better, and that it needs more support than any other stet to get past its environmental issues.  
-
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 californiaconclusion <- read_csv("Biodiversity/californiaconclusion.csv")
@@ -561,6 +557,11 @@ ggmap(US_map2) +
   labs(x = "Longitude", y = "Latitude", title = "Density of Endangered Species\nby National Park in California")
 
 ```  
+
+Factoring in how many parks the state has as well as the indicator of how many species of birds there are in California, it is safe to conclude that California is in the greatest need of support. While California might not have the worst numbers for species of concern across the board, it is doing not well in every category, showing the highest total and both high averages and percentages. These numbers are especially striking when compared to Alaska which has the same number of parks and has some of the lowest numbers for species of concern across all categories.  
+
+What this suggests to us is that California could be doing much better, and that it needs more support than any other state to rectify its environmental issues.  
+
 
 > It is our recommendation, then, for the National Parks Service to focus their support on California.
 
