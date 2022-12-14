@@ -543,5 +543,4 @@ ggmap(US_map2) +
     
 ```
 
-Correlation, the closest National Parks to one of the most heavily developed and populated areas in the country has the highest percentage of Endangered Species. 
 California needs a majority of the National Park Service's conservation Efforts.
